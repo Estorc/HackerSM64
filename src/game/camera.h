@@ -815,8 +815,8 @@ void cutscene_set_fov_shake_preset(u8 preset);
 void set_fov_shake_from_point_preset(u8 preset, f32 posX, f32 posY, f32 posZ);
 void obj_rotate_towards_point(struct Object *obj, Vec3f point, s16 pitchOff, s16 yawOff, s16 pitchDiv, s16 yawDiv);
 s32 update_fixed_camera(struct Camera *c, Vec3f focus, Vec3f pos);
-void set_lakitu_old_position(Vec3f newPos);
-void set_lakitu_old_focus(Vec3f newPos);
+f32* get_lakitu_old_position();
+f32* get_lakitu_old_focus();
 
 Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context);
 

@@ -6999,13 +6999,14 @@ void set_fixed_mode_base_position(f32 x, f32 y, f32 z) {
     sFixedModeBasePosition[2] = z;
 }
 
-void set_lakitu_old_position(Vec3f newPos) {
-    vec3f_copy(sOldPosition, newPos);
+f32* get_lakitu_old_position() {
+    return sOldPosition;
 }
 
-void set_lakitu_old_focus(Vec3f newPos) {
-    vec3f_copy(sOldFocus, newPos);
+f32* get_lakitu_old_focus() {
+    return sOldFocus;
 }
+
 
 /**
  * Easter egg: the player 2 controller can move the camera's focus in the ending and credits.

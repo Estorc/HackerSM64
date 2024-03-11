@@ -118,6 +118,7 @@ void bhv_rocket_loop(void) {
                         && obj != o
                     ) {
                         obj->oPosX += 23970;
+                        obj->header.gfx.pos[0] = obj->oPosX;
                     }
 
                     obj = (struct Object *) obj->header.next;
@@ -142,7 +143,7 @@ void bhv_rocket_loop(void) {
                                 obstacle->oFaceAnglePitch = obj->oFaceAnglePitch;
                                 obstacle->oAction = 0;
                                 obj->oPosX += 23970;
-                                //OBJ GFX = POS !
+                                obj->header.gfx.pos[0] = obj->oPosX;
                             }
                         } else {
                             obj_mark_for_deletion(obj);
@@ -162,27 +163,35 @@ void bhv_rocket_loop(void) {
                         && obj != o
                     ) {
                         obj->oPosX += 23970;
+                        obj->header.gfx.pos[0] = obj->oPosX;
                     }
 
                     obj = (struct Object *) obj->header.next;
                 }
 
+                /*calc_cam_goal_pos(cGoalPos, 0);
+                set_fixed_mode_base_position(
+                    cGoalPos[0],
+                    cGoalPos[1],
+                    cGoalPos[2]
+                );
+                vec3f_copy(gPlayerCameraState[0].pos, gMarioState->pos);*/
+                //update_fixed_camera(gCamera, gCamera->focus, gCamera->pos);
+                gCamera->pos[0] += 23970;
+                gCamera->focus[0] += 23970;
+                gLakituState.goalPos[0] += 23970;
+                get_lakitu_old_position()[0] += 23970;
+                get_lakitu_old_focus()[0] += 23970;
+                gLakituState.pos[0] += 23970;
+                gLakituState.curPos[0] += 23970;
+                gCamera->focus[0] += 23970;
+                gLakituState.curFocus[0] += 23970;
             }
             calc_cam_goal_pos(cGoalPos, 0);
-            vec3f_copy(gPlayerCameraState[0].pos, gMarioState->pos);
-            update_fixed_camera(gCamera, gCamera->focus, gCamera->pos);
-            vec3f_copy(gCamera->pos, cGoalPos);
-            set_lakitu_old_position(gCamera->pos);
-            set_lakitu_old_focus(gCamera->focus);
-            vec3f_copy(gLakituState.goalPos, gCamera->pos);
-            vec3f_copy(gLakituState.pos, gCamera->pos);
-            vec3f_copy(gLakituState.curPos, gCamera->pos);
-            vec3f_copy(gCamera->focus, gCamera->focus);
-            vec3f_copy(gLakituState.curFocus, gCamera->focus);
             set_fixed_mode_base_position(
-                cGoalPos[0],
-                cGoalPos[1],
-                cGoalPos[2]
+                    cGoalPos[0],
+                    cGoalPos[1],
+                    cGoalPos[2]
             );
 
             if (perform_rocket_step(o)/* || o->oPosY + o->oVelY + 200.0f > find_ceil(o->oPosX, o->oPosY, o->oPosZ, &ceil)*/) {
@@ -218,21 +227,29 @@ void bhv_init_rocket_obstacle(void) {
         case 1:
             obj_set_collision_data(o, rocket_obstacle_1_collision);
             cur_obj_set_model(MODEL_ROCKET_OBSTACLE_1);
+            o->oAngleVelRoll = random_u16()%0x400;
+            o->oAngleVelRoll *= (o->oAngleVelRoll & 1) ? 1 : -1;
             break;
 
         case 2:
-            obj_set_collision_data(o, rocket_obstacle_2_collision);
+            obj_set_collision_data(o, rocket_obstacle_2_collision); 
             cur_obj_set_model(MODEL_ROCKET_OBSTACLE_2);
+            o->oAngleVelRoll = random_u16()%0x150;
+            o->oAngleVelRoll *= (o->oAngleVelRoll & 1) ? 1 : -1;
             break;
 
         case 3:
             obj_set_collision_data(o, rocket_obstacle_3_collision);
             cur_obj_set_model(MODEL_ROCKET_OBSTACLE_3);
+            o->oAngleVelRoll = random_u16()%0x400;
+            o->oAngleVelRoll *= (o->oAngleVelRoll & 1) ? 1 : -1;
             break;
 
         case 4:
             obj_set_collision_data(o, rocket_obstacle_4_collision);
             cur_obj_set_model(MODEL_ROCKET_OBSTACLE_4);
+            o->oAngleVelRoll = random_u16()%0x400;
+            o->oAngleVelRoll *= (o->oAngleVelRoll & 1) ? 1 : -1;
             break;
 
     }
@@ -244,6 +261,7 @@ void bhv_init_rocket_obstacle(void) {
 
 void bhv_rocket_obstacle_loop(void) {
 
+    o->oFaceAngleRoll += o->oAngleVelRoll;
 
 }
 

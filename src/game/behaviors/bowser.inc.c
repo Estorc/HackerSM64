@@ -1865,6 +1865,8 @@ Gfx *geo_switch_bowser_eyes(s32 callContext, struct GraphNode *node, UNUSED Mat4
  * Geo switch that sets Bowser's Rainbow coloring (in BitS)
  */
 Gfx *geo_bits_bowser_coloring(s32 callContext, struct GraphNode *node, UNUSED s32 context) {
+
+    
     Gfx *gfxHead = NULL;
 
     if (callContext == GEO_CONTEXT_RENDER) {

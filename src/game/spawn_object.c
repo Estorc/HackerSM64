@@ -159,7 +159,6 @@ struct Object *allocate_object(struct ObjectNode *objList) {
     }
 #endif
 
-    obj->unused1 = 0;
     obj->bhvStackIndex = 0;
     obj->bhvDelayTimer = 0;
 

@@ -2,6 +2,7 @@
 
 #include "sm64.h"
 #include "area.h"
+#include "actors/common0.h"
 #include "audio/external.h"
 #include "behavior_actions.h"
 #include "behavior_data.h"
@@ -783,3 +784,15 @@ UNUSED s32 debug_sequence_tracker(s16 debugInputSequence[]) {
 #include "behaviors/treasure_chest.inc.c"
 #include "behaviors/mips.inc.c"
 #include "behaviors/yoshi.inc.c"
+
+#include "behaviors/2d_scene.inc.c"
+#include "behaviors/mario_dash_clone.inc.c"
+#include "behaviors/checkpoint_area.inc.c"
+#include "behaviors/wood_crate.inc.c"
+#include "behaviors/iron_crate.inc.c"
+#include "behaviors/iron_cage.inc.c"
+#include "behaviors/anti_gravity_olive.inc.c"
+#include "behaviors/john_pillar.inc.c"
+#include "behaviors/pizza_face.inc.c"
+#include "behaviors/2d_cylinder_scene.inc.c"
+#include "behaviors/rocket.inc.c"

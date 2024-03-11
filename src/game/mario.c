@@ -459,7 +459,7 @@ u32 mario_get_terrain_sound_addend(struct MarioState *m) {
     if (m->floor != NULL) {
         floorType = m->floor->type;
 
-        if ((gCurrLevelNum != LEVEL_LLL) && (m->floorHeight < (m->waterLevel - 10))) {
+        if ((gCurrLevelNum != LEVEL_LLL) && (m->pos[1] < (m->waterLevel - 10))) {
             // Water terrain sound, excluding LLL since it uses water in the volcano.
             ret = SOUND_TERRAIN_WATER << 16;
         } else if (SURFACE_IS_QUICKSAND(floorType)) {
@@ -945,6 +945,7 @@ u32 set_mario_action_cutscene(struct MarioState *m, u32 action, UNUSED u32 actio
  * specific function if needed.
  */
 u32 set_mario_action(struct MarioState *m, u32 action, u32 actionArg) {
+    if (!(action & ACT_FLAG_DASHING)) m->flags &= ~MARIO_TURBODASH;
     switch (action & ACT_GROUP_MASK) {
         case ACT_GROUP_MOVING:    action = set_mario_action_moving(   m, action, actionArg); break;
         case ACT_GROUP_AIRBORNE:  action = set_mario_action_airborne( m, action, actionArg); break;
@@ -1221,6 +1222,9 @@ void update_mario_button_inputs(struct MarioState *m) {
     if (m->controller->buttonPressed & A_BUTTON) m->input |= INPUT_A_PRESSED;
     if (m->controller->buttonDown    & A_BUTTON) m->input |= INPUT_A_DOWN;
 
+    if (m->controller->buttonPressed & L_TRIG) m->input |= INPUT_L_PRESSED;
+    if (m->controller->buttonDown    & L_TRIG) m->input |= INPUT_L_DOWN;
+
     // Don't update for these buttons if squished.
     if (m->squishTimer == 0) {
         if (m->controller->buttonDown    & B_BUTTON) m->input |= INPUT_B_DOWN;
@@ -1256,7 +1260,24 @@ void update_mario_joystick_inputs(struct MarioState *m) {
     }
 
     if (m->intendedMag > 0.0f) {
-        m->intendedYaw = atan2s(-controller->stickY, controller->stickX) + m->area->camera->yaw;
+        switch (m->movementType) {
+            case NORMAL_MOVEMENT:
+                m->intendedYaw = atan2s(-controller->stickY, controller->stickX) + m->area->camera->yaw;
+                break;
+
+            case C2D_SCENE_MOVEMENT:
+                m->intendedMag *= absf(controller->stickX/64);
+                if (controller->stickX >= 0) m->intendedYaw = gLakituState.forcedYaw-0x4000;
+                else m->intendedYaw = gLakituState.forcedYaw-0x4000+0x8000;
+                break;
+
+            case C2D_CYLINDER_SCENE_MOVEMENT:
+                m->intendedMag *= absf(controller->stickX/64);
+                if (controller->stickX >= 0) m->intendedYaw = gLakituState.forcedYaw-0x4000;
+                else m->intendedYaw = gLakituState.forcedYaw-0x4000+0x8000;
+                break;
+
+        }
         m->input |= INPUT_NONZERO_ANALOG;
     } else {
         m->intendedYaw = m->faceAngle[1];
@@ -1292,7 +1313,7 @@ void update_mario_geometry_inputs(struct MarioState *m) {
         m->floorYaw = atan2s(m->floor->normal.z, m->floor->normal.x);
         m->terrainSoundAddend = mario_get_terrain_sound_addend(m);
 
-        if ((m->pos[1] > m->waterLevel - 40) && mario_floor_is_slippery(m)) {
+        if ((m->pos[1] > m->waterLevel - 40) && m->action != ACT_DASHING && mario_floor_is_slippery(m)) {
             m->input |= INPUT_ABOVE_SLIDE;
         }
 
@@ -1326,6 +1347,7 @@ void update_mario_geometry_inputs(struct MarioState *m) {
  * Handles Mario's input flags as well as a couple timers.
  */
 void update_mario_inputs(struct MarioState *m) {
+    
     m->particleFlags = PARTICLE_NONE;
     m->input = INPUT_NONE;
     m->collidedObjInteractTypes = m->marioObj->collidedObjInteractTypes;
@@ -1344,6 +1366,14 @@ void update_mario_inputs(struct MarioState *m) {
 #ifdef VANILLA_DEBUG
     debug_print_speed_action_normal(m);
 #endif
+    /*if (m->input & INPUT_L_PRESSED) {
+
+        m->particleFlags |= PARTICLE_WAVE_TRAIL;
+        play_sound_if_no_flag(m,SOUND_MARIO_YAHOO_WAHA_YIPPEE,MARIO_MARIO_SOUND_PLAYED);
+        m->forwardVel *= 3;
+
+    }*/
+
     if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
         if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
             m->input |= INPUT_FIRST_PERSON;
@@ -1800,6 +1830,7 @@ s32 execute_mario_action(UNUSED struct Object *obj) {
  **************************************************/
 
 void init_mario(void) {
+    gMarioState->movementType = NORMAL_MOVEMENT;
     gMarioState->actionTimer = 0;
     gMarioState->framesSinceA = 0xFF;
     gMarioState->framesSinceB = 0xFF;
@@ -1858,6 +1889,16 @@ void init_mario(void) {
 
     vec3f_copy(gMarioState->marioObj->header.gfx.pos, gMarioState->pos);
     vec3s_set(gMarioState->marioObj->header.gfx.angle, 0, gMarioState->faceAngle[1], 0);
+
+    f32 distWithParticle;
+    struct Object *PizzaFace;
+    if (PizzaFace = cur_obj_find_nearest_object_with_behavior(bhvPizzaFace, &distWithParticle)) {
+        PizzaFace->oOpacity = 0;
+        PizzaFace->oPosX = gMarioState->pos[0];
+        PizzaFace->oPosY = gMarioState->pos[1];
+        PizzaFace->oPosZ = gMarioState->pos[2];
+    }
+    if (!cur_obj_find_nearest_object_with_behavior(bhvMarioDashClone, &distWithParticle)) spawn_object(gMarioState->marioObj, MODEL_MARIO_PARTICLE, bhvMarioDashClone);
 
     Vec3s capPos;
     if (save_file_get_cap_pos(capPos)) {

@@ -195,4 +195,41 @@ extern const GeoLayout test_platform_geo[];
 extern const Gfx unknown_seg8_dl_08026260[];
 extern const Collision unknown_seg8_collision_080262F8[];
 
+#include "wood_crate/geo_header.h"
+
+#include "wood_crate/collision_header.h"
+
+#include "iron_crate/geo_header.h"
+
+#include "iron_crate/collision_header.h"
+
+
+#include "iron_cage/geo_header.h"
+
+#include "anti_gravity_olive/geo_header.h"
+
+#include "john_pillar/geo_header.h"
+
+#include "john_pillar/collision_header.h"
+
+#include "pizza_face/geo_header.h"
+
+#include "rocket/geo_header.h"
+
+#include "rocket_obstacle_3/geo_header.h"
+
+#include "rocket_obstacle_3/collision_header.h"
+
+#include "rocket_obstacle_4/geo_header.h"
+
+#include "rocket_obstacle_4/collision_header.h"
+
+#include "rocket_obstacle_2/geo_header.h"
+
+#include "rocket_obstacle_2/collision_header.h"
+
+#include "rocket_obstacle_1/geo_header.h"
+
+#include "rocket_obstacle_1/collision_header.h"
+
 #endif

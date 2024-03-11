@@ -541,4 +541,18 @@ extern const BehaviorScript bhvEndBirds2[];
 extern const BehaviorScript bhvIntroScene[];
 extern const BehaviorScript bhvUnusedFakeStar[];
 
+extern const BehaviorScript bhv2DScene[];
+extern const BehaviorScript bhvMarioDashClone[];
+extern const BehaviorScript bhvCheckpointArea[];
+extern const BehaviorScript bhvWoodCrate[];
+extern const BehaviorScript bhvIronCrate[];
+extern const BehaviorScript bhvIronCage[];
+extern const BehaviorScript bhvAntiGravOlive[];
+extern const BehaviorScript bhvJohnPillar[];
+extern const BehaviorScript bhvPizzaFace[];
+extern const BehaviorScript bhv2DCylinderScene[];
+extern const BehaviorScript bhvRocket[];
+extern const BehaviorScript bhvRocketExplosion[];
+extern const BehaviorScript bhvRocketObstacle[];
+
 #endif // BEHAVIOR_DATA_H

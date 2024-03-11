@@ -111,7 +111,7 @@ static struct PowerMeterHUD sBreathMeterHUD = {
 s32 sBreathMeterVisibleTimer = 0;
 #endif
 
-static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
+//static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
 
 /**
  * Renders a rgba16 16x16 glyph texture from a table list.
@@ -474,15 +474,15 @@ void render_hud_timer(void) {
  * Sets HUD status camera value depending of the actions
  * defined in update_camera_status.
  */
-void set_hud_camera_status(s16 status) {
+/*void set_hud_camera_status(s16 status) {
     sCameraHUD.status = status;
-}
+}*/
 
 /**
  * Renders camera HUD glyphs using a table list, depending of
  * the camera status called, a defined glyph is rendered.
  */
-void render_hud_camera_status(void) {
+/*void render_hud_camera_status(void) {
     Texture *(*cameraLUT)[6] = segmented_to_virtual(&main_hud_camera_lut);
     s32 x = GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(HUD_CAMERA_X);
     s32 y = 205;
@@ -516,7 +516,7 @@ void render_hud_camera_status(void) {
     }
 
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
-}
+}*/
 
 /**
  * Render HUD strings using hudDisplayFlags with it's render functions,
@@ -583,7 +583,7 @@ void render_hud(void) {
 #ifdef PUPPYCAM
             if (!gPuppyCam.enabled) {
 #endif
-            render_hud_camera_status();
+            //render_hud_camera_status();
 #ifdef PUPPYCAM
             }
 #endif

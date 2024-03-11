@@ -266,7 +266,7 @@ u16 sLevelAcousticReaches[LEVEL_COUNT] = {
 // This code block is simply commented out for now as to not destroy compatibility with any streamed audio tools.
 // TODO: Delete this entirely once the unsupporting streamed tools or their builds are outdated.
 
-/*
+
 
 u8 sBackgroundMusicDefaultVolume[] = {
     127, // SEQ_SOUND_PLAYER
@@ -304,12 +304,13 @@ u8 sBackgroundMusicDefaultVolume[] = {
     70,  // SEQ_EVENT_CUTSCENE_ENDING
     65,  // SEQ_MENU_FILE_SELECT
     0,   // SEQ_EVENT_CUTSCENE_LAKITU (not in JP)
+    127, // SEQ_PIZZA_TIME
 };
 
 STATIC_ASSERT(ARRAY_COUNT(sBackgroundMusicDefaultVolume) == SEQ_COUNT,
               "change this array if you are adding sequences");
 
-*/
+
 
 u8 sCurrentBackgroundMusicSeqId = SEQUENCE_NONE;
 u8 sMusicDynamicDelay = 0;

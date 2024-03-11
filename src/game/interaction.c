@@ -24,6 +24,7 @@
 #include "sound_init.h"
 #include "rumble_init.h"
 #include "config.h"
+#include "game/object_list_processor.h"
 
 u8  sDelayInvincTimer;
 s16 sInvulnerable;
@@ -683,7 +684,7 @@ u32 take_damage_from_interact_object(struct MarioState *m) {
         damage += (damage + 1) / 2;
     }
 
-    if (m->flags & MARIO_METAL_CAP) {
+    if (m->flags & MARIO_METAL_CAP || m->flags & MARIO_TURBODASH) {
         damage = 0;
     }
 
@@ -898,7 +899,7 @@ u32 interact_warp(struct MarioState *m, UNUSED u32 interactType, struct Object *
             m->usedObj           = obj;
 
 #if ENABLE_RUMBLE
-            if (obj->collisionData == segmented_to_virtual(warp_pipe_seg3_collision_03009AC8)) {
+            if (obj->collisionData == segmented_to_virtual(warp_pipe_collision)) {
                 play_sound(SOUND_MENU_ENTER_PIPE, m->marioObj->header.gfx.cameraToObject);
                 queue_rumble_data(15, 80);
             } else {
@@ -906,7 +907,7 @@ u32 interact_warp(struct MarioState *m, UNUSED u32 interactType, struct Object *
                 queue_rumble_data(12, 80);
             }
 #else
-            play_sound(obj->collisionData == segmented_to_virtual(warp_pipe_seg3_collision_03009AC8)
+            play_sound(obj->collisionData == segmented_to_virtual(warp_pipe_collision)
                            ? SOUND_MENU_ENTER_PIPE
                            : SOUND_MENU_ENTER_HOLE,
                        m->marioObj->header.gfx.cameraToObject);
@@ -1222,7 +1223,7 @@ u32 interact_clam_or_bubba(struct MarioState *m, UNUSED u32 interactType, struct
 
 u32 interact_bully(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
     u32 interaction;
-    if (m->flags & MARIO_METAL_CAP) {
+    if (m->flags & MARIO_METAL_CAP || m->flags & MARIO_TURBODASH) {
         interaction = INT_FAST_ATTACK_OR_SHELL;
     } else {
         interaction = determine_interaction(m, obj);
@@ -1313,7 +1314,7 @@ u32 interact_mr_blizzard(struct MarioState *m, UNUSED u32 interactType, struct O
 
 u32 interact_hit_from_below(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
     u32 interaction;
-    if (m->flags & MARIO_METAL_CAP) {
+    if (m->flags & MARIO_METAL_CAP || m->flags & MARIO_TURBODASH) {
         interaction = INT_FAST_ATTACK_OR_SHELL;
     } else {
         interaction = determine_interaction(m, obj);
@@ -1353,7 +1354,7 @@ u32 interact_hit_from_below(struct MarioState *m, UNUSED u32 interactType, struc
 
 u32 interact_bounce_top(struct MarioState *m, UNUSED u32 interactType, struct Object *obj) {
     u32 interaction;
-    if (m->flags & MARIO_METAL_CAP) {
+    if (m->flags & MARIO_METAL_CAP || m->flags & MARIO_TURBODASH) {
         interaction = INT_FAST_ATTACK_OR_SHELL;
     } else {
         interaction = determine_interaction(m, obj);
@@ -1793,6 +1794,7 @@ u32 interact_text(struct MarioState *m, UNUSED u32 interactType, struct Object *
 }
 
 void check_kick_or_punch_wall(struct MarioState *m) {
+    s32 numWalls;
     if (m->flags & (MARIO_PUNCHING | MARIO_KICKING | MARIO_TRIPPING)) {
         struct WallCollisionData detector;
         detector.x = m->pos[0] + 50.0f * sins(m->faceAngle[1]);
@@ -1801,7 +1803,17 @@ void check_kick_or_punch_wall(struct MarioState *m) {
         detector.offsetY = 80.0f;
         detector.radius = 5.0f;
 
-        if (find_wall_collisions(&detector) > 0) {
+        if ((numWalls = find_wall_collisions(&detector)) > 0) {
+            for (u8 hitRes, i = 0; i < numWalls; i++) {
+                if (detector.walls[i] && detector.walls[i]->type == SURFACE_CALL_BEHAVIOR) {
+                    struct Object *tmpPrevObj = o;
+                    o = detector.walls[i]->object;
+                    hitRes = o->OnHitBehavior(detector.walls[i]->force);
+                    o = tmpPrevObj;
+                    if (hitRes) break;
+                    if (i == numWalls) return;
+                } else break;
+            }
             if (m->action != ACT_MOVE_PUNCHING || m->forwardVel >= 0.0f) {
                 if (m->action == ACT_PUNCHING) {
                     m->action = ACT_MOVE_PUNCHING;

@@ -551,6 +551,33 @@ void bhv_dust_smoke_loop(void);
 void bhv_yoshi_loop(void);
 void bhv_volcano_trap_loop(void);
 
+void bhv_2d_scene_loop(void);
+void bhv_init_2d_scene(void);
+void bhv_mario_dash_clone_loop(void);
+void bhv_checkpoint_area_loop(void);
+void bhv_init_wood_crate(void);
+u8 bhv_wood_crate_on_hit(u8 params);
+void bhv_init_iron_crate(void);
+u8 bhv_iron_crate_on_hit(u8 params);
+void bhv_init_iron_cage(void);
+void bhv_iron_cage_loop(void);
+u8 bhv_iron_cage_on_hit(u8 params);
+void bhv_init_anti_grav_olive(void);
+void bhv_anti_grav_olive_loop(void);
+void bhv_init_john_pillar(void);
+void bhv_john_pillar_loop(void);
+u8 bhv_john_pillar_on_hit(u8 params);
+void bhv_init_pizza_face(void);
+void bhv_pizza_face_loop(void);
+
+void bhv_2d_cylinder_scene_loop(void);
+void bhv_init_2d_cylinder_scene(void);
+void bhv_init_rocket(void);
+void bhv_rocket_loop(void);
+void bhv_rocket_obstacle_loop(void);
+void bhv_init_rocket_obstacle(void);
+
+
 Gfx *geo_move_mario_part_from_parent(s32 callContext, UNUSED struct GraphNode *node, Mat4 mtx);
 
 // Bowser

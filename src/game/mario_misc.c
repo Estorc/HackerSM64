@@ -343,6 +343,67 @@ Gfx *geo_mirror_mario_set_alpha(s32 callContext, struct GraphNode *node, UNUSED 
 }
 
 /**
+ * Geo node that creates a clone of Mario's geo node and updates it to becomes
+ * a remanent image of the player.
+ */
+
+#define MAX_DASHING_MARIO_FRAMES 4
+struct GraphNodeObject gDashingMario[MAX_DASHING_MARIO_FRAMES];  // copy of Mario's geo node for drawing mirror Mario
+Gfx *geo_render_dashing_mario(s32 callContext, struct GraphNode *node, UNUSED Mat4 *mtx) {
+    struct Object *mario = gMarioStates[0].marioObj;
+    struct GraphNodeGenerated *gen = (struct GraphNodeGenerated *) node;
+    switch (callContext) {
+        case GEO_CONTEXT_CREATE:
+            for (int i = 0; i < MAX_DASHING_MARIO_FRAMES; i++) {
+                init_graph_node_object(NULL, &gDashingMario[i], NULL, gVec3fZero, gVec3sZero, gVec3fOne);
+                geo_add_child(node, &gDashingMario[i].node);
+                gDashingMario[i].areaIndex = 0;
+            }
+            break;
+        case GEO_CONTEXT_AREA_LOAD:
+            
+            break;
+        case GEO_CONTEXT_AREA_UNLOAD:
+            
+            break;
+        case GEO_CONTEXT_RENDER:
+            if (gMarioState->flags & MARIO_TURBODASH) {
+                // TODO: Is this a geo layout copy or a graph node copy?
+                //gen->parameter;
+                for (int i = MAX_DASHING_MARIO_FRAMES-1; i > 0; i--) {
+                    gDashingMario[i].sharedChild = mario->header.gfx.sharedChild;
+                    gDashingMario[i].areaIndex = gDashingMario[i-1].areaIndex;
+                    if (gDashingMario[i].areaIndex) {
+                        vec3s_copy(gDashingMario[i].angle, gDashingMario[i-1].angle);
+                        vec3f_copy(gDashingMario[i].pos, gDashingMario[i-1].pos);
+                        vec3f_copy(gDashingMario[i].scale, gDashingMario[i-1].scale);
+                        gDashingMario[i].animInfo = gDashingMario[i-1].animInfo;
+                        ((struct GraphNode *) &gDashingMario[i])->flags |= GRAPH_RENDER_ACTIVE;
+                    }
+                }
+                gDashingMario[0].sharedChild = mario->header.gfx.sharedChild;
+                gDashingMario[0].areaIndex = mario->header.gfx.areaIndex;
+                vec3s_copy(gDashingMario[0].angle, mario->header.gfx.angle);
+                vec3f_copy(gDashingMario[0].pos, mario->header.gfx.pos);
+                vec3f_copy(gDashingMario[0].scale, mario->header.gfx.scale);
+
+
+                gDashingMario[0].animInfo = mario->header.gfx.animInfo;
+                ((struct GraphNode *) &gDashingMario[0])->flags |= GRAPH_RENDER_ACTIVE;
+            } else {
+                if (((struct GraphNode *) &gDashingMario[0])->flags & GRAPH_RENDER_ACTIVE) {
+                    for (int i = 0; i < MAX_DASHING_MARIO_FRAMES; i++) {
+                        vec3f_copy(gDashingMario[i].pos, gVec3fZero);
+                        ((struct GraphNode *) &gDashingMario[i])->flags &= ~GRAPH_RENDER_ACTIVE;
+                    }
+                }
+            }
+            break;
+    }
+    return NULL;
+}
+
+/**
  * Determines if Mario is standing or running for the level of detail of his model.
  * If Mario is standing still, he is always high poly. If he is running,
  * his level of detail depends on the distance to the camera.

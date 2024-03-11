@@ -1,0 +1,17 @@
+extern const GeoLayout pizza_face_geo[];
+extern Lights1 pizza_face_f3dlite_material_003_layer5_lights;
+extern Lights1 pizza_face_f3dlite_material_002_layer5_lights;
+extern u8 pizza_face_pizza_face_top_ci4[];
+extern u8 pizza_face_pizza_face_top_pal_rgba16[];
+extern u8 pizza_face_pizza_face_bottom_ci4[];
+extern u8 pizza_face_pizza_face_bottom_pal_rgba16[];
+extern Vtx pizza_face_002_display_list_mesh_layer_5_vtx_0[4];
+extern Gfx pizza_face_002_display_list_mesh_layer_5_tri_0[];
+extern Vtx pizza_face_002_display_list_mesh_layer_5_vtx_1[4];
+extern Gfx pizza_face_002_display_list_mesh_layer_5_tri_1[];
+extern Gfx mat_pizza_face_f3dlite_material_003_layer5[];
+extern Gfx mat_revert_pizza_face_f3dlite_material_003_layer5[];
+extern Gfx mat_pizza_face_f3dlite_material_002_layer5[];
+extern Gfx mat_revert_pizza_face_f3dlite_material_002_layer5[];
+extern Gfx pizza_face_002_display_list_mesh_layer_5[];
+extern Gfx pizza_face_material_revert_render_settings[];

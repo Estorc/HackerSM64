@@ -124,6 +124,7 @@ f32 gDialogBoxScale = DEFAULT_DIALOG_BOX_SCALE;
 s16 gDialogScrollOffsetY = 0;
 s8 gDialogBoxType = DIALOG_TYPE_ROTATE;
 s16 gDialogID = DIALOG_NONE;
+s16 gLargeStringID = LSTRING_NONE;
 s16 gLastDialogPageStrPos = 0;
 s16 gDialogTextPos = 0;
 s8 gDialogLineNum = 1;
@@ -1425,6 +1426,68 @@ void print_peach_letter_message(void) {
     gCutsceneMsgTimer++;
 }
 
+
+#define LARGE_STR_Y 20
+#define LARGE_MESSAGE_TIMER 70
+
+
+void set_large_message(s16 ID) {
+
+    gLargeStringID = ID;
+
+}
+
+void print_large_message(void) {
+
+    void    **actNameTbl = segmented_to_virtual(languageTable[gInGameLanguage][2]);
+    u8 *actName = segmented_to_virtual(actNameTbl[COURSE_NUM_TO_INDEX(gCurrCourseNum) * 6 + gLastCompletedStarNum - 1]);
+    f32 scale = (f32) MIN(SCREEN_WIDTH/get_string_width(actName)-0.1f,3.5f);
+    s16 xPos = get_str_x_pos_from_center((s16) ((f32) 159/scale), actName, 10.0f);
+
+    create_dl_translation_matrix(MENU_MTX_PUSH, 97.0f, 118.0f, 0);
+
+    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+
+
+    create_dl_scale_matrix(MENU_MTX_NOPUSH, scale, scale, 1.0f);
+
+    gDPSetEnvColor(gDisplayListHead++, 20, 20, 20, gCutsceneMsgFade>>1);
+    print_generic_string(xPos+1, LARGE_STR_Y-1, actName);
+
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gCutsceneMsgFade);
+    print_generic_string(xPos, LARGE_STR_Y, actName);
+
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+
+    // at the start/end of message, reset the fade.
+    if (gCutsceneMsgTimer == 0) {
+        gCutsceneMsgFade = 0;
+    }
+
+    // we're less than 20 increments, so increase the fade.
+    if (gCutsceneMsgTimer < 20) {
+        gCutsceneMsgFade += 12;
+    }
+
+    // we're after LARGE_MESSAGE_TIMER increments, so decrease the fade.
+    if (gCutsceneMsgTimer > LARGE_MESSAGE_TIMER) {
+        gCutsceneMsgFade -= 12;
+    }
+
+    // 20 increments after the start of the decrease, we're
+    // back where we are, so reset everything at the end.
+    if (gCutsceneMsgTimer > (LARGE_MESSAGE_TIMER + 20)) {
+        gCutsceneMsgIndex = -1;
+        gCutsceneMsgFade = 0; //! uselessly reset since the next execution will just set it to 0 again.
+        gLargeStringID = LSTRING_NONE;
+        gCutsceneMsgTimer = 0;
+        return; // return to avoid incrementing the timer
+    }
+
+    gCutsceneMsgTimer++;
+}
+
 /**
  * Renders the cannon reticle when Mario is inside a cannon.
  * Formed by four triangles.
@@ -2217,15 +2280,22 @@ s32 render_menus_and_dialogs(void) {
         }
 
         gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;
-    } else if (gDialogID != DIALOG_NONE) {
-        // The Peach "Dear Mario" message needs to be repositioned separately
-        if (gDialogID == DIALOG_020) {
-            print_peach_letter_message();
-            return mode;
-        }
+    } else {
+        if (gDialogID != DIALOG_NONE) {
+            // The Peach "Dear Mario" message needs to be repositioned separately
+            if (gDialogID == DIALOG_020) {
+                print_peach_letter_message();
+                return mode;
+            }
 
-        render_dialog_entries();
-        gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;
+            render_dialog_entries();
+            gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;
+        }
+        if (gLargeStringID != LSTRING_NONE) {
+
+            print_large_message();
+
+        }
     }
 
     return mode;

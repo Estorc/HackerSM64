@@ -10,7 +10,7 @@
 #include "explosion/geo.inc.c"
 #include "butterfly/geo.inc.c"
 #include "coin/geo.inc.c"
-#include "warp_pipe/geo.inc.c"
+//#include "warp_pipe/geo.inc.c"
 #include "door/geo.inc.c"
 #include "bowser_key/geo.inc.c"
 #include "flame/geo.inc.c"
@@ -25,3 +25,5 @@
 #include "white_particle/geo.inc.c"
 #include "wooden_signpost/geo.inc.c"
 #include "tree/geo.inc.c"
+
+#include "warp_pipe/geo.inc.c"

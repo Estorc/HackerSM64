@@ -27,10 +27,14 @@ void bhv_collect_star_init(void) {
     }
 
     obj_set_hitbox(o, &sCollectStarHitbox);
+    if (!GET_BPARAM2(o->oBehParams))
+        o->oInteractionSubtype |= INT_SUBTYPE_NO_EXIT;
 }
 
 void bhv_collect_star_loop(void) {
     o->oFaceAngleYaw += 0x800;
+
+    if (o->oFaceAngleYaw % 0x8000 == 0 && is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 3000)) cur_obj_play_sound_2(SOUND_OBJ_STAR_GLINT);
 
     if (o->oInteractStatus & INT_STATUS_INTERACTED) {
         obj_mark_for_deletion(o);

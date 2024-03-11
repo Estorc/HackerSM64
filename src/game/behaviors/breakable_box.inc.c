@@ -101,11 +101,19 @@ void bhv_hidden_object_loop(void) {
 }
 
 void bhv_breakable_box_loop(void) {
+    u8 forceDestroy = 0;
     obj_set_hitbox(o, &sBreakableBoxHitbox);
     cur_obj_set_model(MODEL_BREAKABLE_BOX);
     if (o->oTimer == 0) breakable_box_init();
-    if (cur_obj_was_attacked_or_ground_pounded()) {
+    if (o->numCollidedObjs != 0 && o->collidedObjs[0] == gMarioObject && o->oUnusedCoinParams & MARIO_TURBODASH) {
+        gMarioState->forwardVel = 120.0f;
+        set_mario_action(gMarioState, gMarioState->prevAction, 0);
+        forceDestroy = 1;
+    }
+    if (cur_obj_was_attacked_or_ground_pounded() || forceDestroy) {
         obj_explode_and_spawn_coins(46.0f, COIN_TYPE_YELLOW);
         create_sound_spawner(SOUND_GENERAL_BREAK_BOX);
+    } else {
+        o->oUnusedCoinParams = gMarioState->flags;
     }
 }

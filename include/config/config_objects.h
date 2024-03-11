@@ -22,12 +22,12 @@
 /**
  * Allows for retries on collecting the remaining blue coins from a blue coin switch.
  */
-// #define BLUE_COIN_SWITCH_RETRY
+#define BLUE_COIN_SWITCH_RETRY
 
 /**
  * Allow previewing blue coin locations from a blue coin switch when Mario is standing on the blue coin switch.
  */
-// #define BLUE_COIN_SWITCH_PREVIEW
+#define BLUE_COIN_SWITCH_PREVIEW
 
 /****************
  * -- GOOMBA --
@@ -42,7 +42,7 @@
  * Floombas! These fellas sport custom behaviors (bhvFloomba, bhvFloombaTripletSpawner) and of course the iconic Floomba texture.
  * Also supports macros (macro_floomba, macro_huge_floomba, macro_tiny_floomba, macro_floomba_triplet_spawner, macro_floomba_quintuplet_spawner).
  */
-#define FLOOMBAS
+// #define FLOOMBAS
 
 /**************
  * -- HOOT --

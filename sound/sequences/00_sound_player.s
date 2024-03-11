@@ -5017,6 +5017,8 @@ sound_ref .sound_obj_bowser_tail_pickup
 sound_ref .sound_obj_bowser_defeated
 sound_ref .sound_obj_bowser_spinning
 
+sound_ref .sound_obj_star_glint
+
 .sound_general_swish_water:
 chan_setbank 6
 chan_setinstr 5
@@ -8089,3 +8091,35 @@ envelope_line 1000 32700
 envelope_line 10 16000
 envelope_line 200 32760
 envelope_goto 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.sound_obj_star_glint:
+chan_setbank 5
+chan_setinstr 15
+chan_setenvelope .envelope_32E4
+chan_setdecayrelease 8
+chan_setlayer 0, .layer_32C2
+chan_end
+
+.layer_32C2:
+layer_somethingon
+layer_portamento 0x82, 20, 255
+.layer_32C7:
+layer_note1 43, 0x1b58, 63
+layer_jump .layer_32C7

@@ -488,7 +488,7 @@
         "Pah": {
             "release_rate": 208,
             "envelope": "envelope0",
-            "sound": {"sample": "1D", "tuning": 0.793701}
+            "sound": {"sample": "49_haa", "tuning": 0.793701}
         },
         "Accordion 2": {
             "release_rate": 208,

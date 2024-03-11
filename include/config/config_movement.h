@@ -7,7 +7,7 @@
 /**
  * Changes Mario's ground turn radius by making it dependent on the analog stick magnitude and speed.
  */
-// #define VELOCITY_BASED_TURN_SPEED
+#define VELOCITY_BASED_TURN_SPEED
 
 /**
  * Allows Mario to easily side flip when moving forwards at any speed.
@@ -141,4 +141,4 @@
  * These require Platform Displacement 2 to be enabled.
  */
 #define MARIO_INERTIA_UPWARD
-// #define MARIO_INERTIA_LATERAL
+#define MARIO_INERTIA_LATERAL

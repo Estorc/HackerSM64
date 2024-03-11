@@ -1009,6 +1009,11 @@ s32 act_twirl_land(struct MarioState *m) {
 
 s32 act_ground_pound_land(struct MarioState *m) {
     m->actionState = ACT_STATE_GROUND_POUND_LAND_1;
+    if (m->input & INPUT_A_PRESSED) {
+        m->particleFlags |= PARTICLE_MIST_CIRCLE | PARTICLE_HORIZONTAL_STAR;
+        set_mario_action(m, ACT_TRIPLE_JUMP, 0);
+        return 0;
+    }
     if (m->input & INPUT_STOMPED) {
         return drop_and_set_mario_action(m, ACT_SHOCKWAVE_BOUNCE, 0);
     }

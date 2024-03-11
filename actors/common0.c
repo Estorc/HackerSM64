@@ -79,3 +79,22 @@ UNUSED static const u64 binid_17 = 17;
 
 #include "koopa_shell/model.inc.c"
 UNUSED static const u64 binid_18 = 18;
+
+#include "wood_crate/model.inc.c"
+#include "wood_crate/collision.inc.c"
+#include "iron_crate/model.inc.c"
+#include "iron_crate/collision.inc.c"
+#include "iron_cage/model.inc.c"
+#include "anti_gravity_olive/model.inc.c"
+#include "john_pillar/model.inc.c"
+#include "john_pillar/collision.inc.c"
+#include "pizza_face/model.inc.c"
+#include "rocket/model.inc.c"
+#include "rocket_obstacle_3/model.inc.c"
+#include "rocket_obstacle_3/collision.inc.c"
+#include "rocket_obstacle_4/model.inc.c"
+#include "rocket_obstacle_4/collision.inc.c"
+#include "rocket_obstacle_2/model.inc.c"
+#include "rocket_obstacle_2/collision.inc.c"
+#include "rocket_obstacle_1/model.inc.c"
+#include "rocket_obstacle_1/collision.inc.c"

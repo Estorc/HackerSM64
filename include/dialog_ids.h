@@ -177,3 +177,10 @@ enum DialogId {
 };
 
 #endif // DIALOG_IDS_H
+
+#ifndef LARGE_STRING_ID
+enum LargeStringId {
+    LSTRING_NONE = -1,
+    LSTRING_STAR
+};
+#endif

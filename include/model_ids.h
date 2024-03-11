@@ -550,6 +550,20 @@
 #define MODEL_SILVER_COIN_NO_SHADOW       0xE3        // silver_coin_no_shadow_geo
 #endif
 
+#define MODEL_MARIO_PARTICLE              0xE4        // mario_geo
+#define MODEL_WOOD_CRATE                  0xE5        // wood_crate_geo
+#define MODEL_IRON_CRATE                  0xE6        // iron_crate_geo
+#define MODEL_WARP_PIPE                   0xE7        // warp_pipe_geo
+#define MODEL_IRON_CAGE                   0xE8        // iron_cage_geo
+#define MODEL_ANTI_GRAV_OLIVE             0xE9        // anti_gravity_olive_geo
+#define MODEL_JOHN_PILLAR                 0xEA        // john_pillar_geo
+#define MODEL_PIZZA_FACE                  0xEB        // pizza_face_geo
+#define MODEL_ROCKET                      0xEC        // rocket_geo
+#define MODEL_ROCKET_OBSTACLE_1           0xED        // rocket_obstacle_1_geo
+#define MODEL_ROCKET_OBSTACLE_2           0xEF        // rocket_obstacle_2_geo
+#define MODEL_ROCKET_OBSTACLE_3           0xF0        // rocket_obstacle_3_geo
+#define MODEL_ROCKET_OBSTACLE_4           0xF1        // rocket_obstacle_4_geo
+
 // Menu Models (overwrites Level Geometry IDs)
 #define MODEL_MAIN_MENU_MARIO_SAVE_BUTTON         MODEL_LEVEL_GEOMETRY_03   // main_menu_geo_0001D0
 #define MODEL_MAIN_MENU_RED_ERASE_BUTTON          MODEL_LEVEL_GEOMETRY_04   // main_menu_geo_000290

@@ -1259,6 +1259,9 @@
 #define /*0x100*/ oYoshiTargetYaw  OBJECT_FIELD_S32(0x1E)
 
 
+#define /*0x1B0*/ oCageAnimKey          OBJECT_FIELD_S16(0x4A, 0)
+
+
 /*Custom general defines:
 
 For general s32 ints, use o->oF4, oF8, oFC, o100, o104, o108, o10C, and o110

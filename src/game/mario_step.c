@@ -9,6 +9,7 @@
 #include "game_init.h"
 #include "interaction.h"
 #include "mario_step.h"
+#include "game/object_list_processor.h"
 
 #include "config.h"
 
@@ -370,6 +371,18 @@ s32 perform_ground_step(struct MarioState *m) {
     if (stepResult == GROUND_STEP_HIT_WALL_CONTINUE_QSTEPS) {
         stepResult = GROUND_STEP_HIT_WALL;
     }
+    if ((stepResult == GROUND_STEP_HIT_WALL) && m->wall && m->wall->type == SURFACE_CALL_BEHAVIOR) {
+        struct Object *tmpPrevObj = o;
+        o = m->wall->object;
+        stepResult = (o->OnHitBehavior(m->wall->force)) ? stepResult : GROUND_STEP_NONE;
+        o = tmpPrevObj;
+    }
+    if ((stepResult == GROUND_STEP_NONE) && m->floor && m->floor->type == SURFACE_CALL_BEHAVIOR) {
+        struct Object *tmpPrevObj = o;
+        o = m->floor->object;
+        stepResult = (o->OnHitBehavior(m->floor->force)) ? stepResult : GROUND_STEP_NONE;
+        o = tmpPrevObj;
+    }
     return stepResult;
 }
 
@@ -718,6 +731,26 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
 
     vec3f_copy(m->marioObj->header.gfx.pos, m->pos);
     vec3s_set(m->marioObj->header.gfx.angle, 0, m->faceAngle[1], 0);
+
+    if ((stepResult == AIR_STEP_HIT_WALL) && m->wall && m->wall->type == SURFACE_CALL_BEHAVIOR) {
+        struct Object *tmpPrevObj = o;
+        o = m->wall->object;
+        stepResult = (o->OnHitBehavior(m->wall->force)) ? stepResult : AIR_STEP_NONE;
+        o = tmpPrevObj;
+    }
+    if ((stepResult == AIR_STEP_LANDED) && m->floor && m->floor->type == SURFACE_CALL_BEHAVIOR) {
+        struct Object *tmpPrevObj = o;
+        o = m->floor->object;
+        stepResult = (o->OnHitBehavior(m->floor->force)) ? stepResult : AIR_STEP_NONE;
+        o = tmpPrevObj;
+    }
+    struct Surface *ceil;
+    if (m->pos[1] + 200.0f > find_ceil(m->pos[0], m->pos[1], m->pos[2], &ceil) && ceil && ceil->type == SURFACE_CALL_BEHAVIOR) {
+        struct Object *tmpPrevObj = o;
+        o = ceil->object;
+        o->OnHitBehavior(ceil->force);
+        o = tmpPrevObj;
+    }
 
     return stepResult;
 }

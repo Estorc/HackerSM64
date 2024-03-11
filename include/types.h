@@ -233,7 +233,7 @@ struct AnimInfo {
     /*0x08 0x40*/ s16 animFrame;
     /*0x0A 0x42*/ u16 animTimer;
     /*0x0C 0x44*/ s32 animFrameAccelAssist;
-    /*0x10 0x48*/ s32 animAccel;
+    /*0x10 0x48*/ f32 animAccel;
 };
 
 struct GraphNodeObject {
@@ -321,7 +321,7 @@ struct Object {
         const void *asConstVoidPtr[MAX_OBJECT_FIELDS];
     } ptrData;
 #endif
-    /*0x1C8*/ u32 unused1;
+    /*0x1C8*/ u8 (*OnHitBehavior)(u8 params);
     /*0x1CC*/ const BehaviorScript *curBhvCommand;
     /*0x1D0*/ u32 bhvStackIndex;
     /*0x1D4*/ uintptr_t bhvStack[8];
@@ -407,7 +407,7 @@ struct MarioBodyState {
 
 struct MarioState {
     /*0x00*/ u16 playerID;
-    /*0x02*/ u16 input;
+    /*0x02*/ u32 input;
     /*0x04*/ u32 flags;
     /*0x08*/ u32 particleFlags;
     /*0x0C*/ u32 action;
@@ -467,6 +467,7 @@ struct MarioState {
     /*0xBC*/ f32 peakHeight;
     /*0xC0*/ f32 quicksandDepth;
     /*0xC4*/ f32 windGravity;
+             u32 movementType;
     // -- HackerSM64 MarioState fields begin --
 #ifdef BREATH_METER
              s16 breath;

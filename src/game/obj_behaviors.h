@@ -171,5 +171,7 @@ void bhv_free_bowling_ball_loop(void); /* likely unused */
 void bhv_rr_cruiser_wing_init(void);
 void bhv_rr_cruiser_wing_loop(void);
 void spawn_default_star(f32 x, f32 y, f32 z);
+void bhv_init_anti_grav_olive(void);
+void bhv_anti_grav_olive_loop(void);
 
 #endif // OBJ_BEHAVIORS_H

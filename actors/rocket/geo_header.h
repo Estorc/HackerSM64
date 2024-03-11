@@ -1,0 +1,15 @@
+extern const GeoLayout rocket_geo[];
+extern Lights1 rocket_f3dlite_material_005_lights;
+extern Lights1 rocket_f3dlite_material_008_lights;
+extern Lights1 rocket_f3dlite_material_007_lights;
+extern Vtx rocket_Cylinder_mesh_layer_1_vtx_0[100];
+extern Gfx rocket_Cylinder_mesh_layer_1_tri_0[];
+extern Vtx rocket_Cylinder_mesh_layer_1_vtx_1[71];
+extern Gfx rocket_Cylinder_mesh_layer_1_tri_1[];
+extern Vtx rocket_Cylinder_mesh_layer_1_vtx_2[186];
+extern Gfx rocket_Cylinder_mesh_layer_1_tri_2[];
+extern Gfx mat_rocket_f3dlite_material_005[];
+extern Gfx mat_rocket_f3dlite_material_008[];
+extern Gfx mat_rocket_f3dlite_material_007[];
+extern Gfx rocket_Cylinder_mesh_layer_1[];
+extern Gfx rocket_material_revert_render_settings[];

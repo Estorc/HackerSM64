@@ -21,9 +21,9 @@ UNUSED static const u64 binid_2 = 2;
 #include "coin/model.inc.c"
 UNUSED static const u64 binid_3 = 3;
 
-#include "warp_pipe/model.inc.c"
+/*#include "warp_pipe/model.inc.c"
 #include "warp_pipe/collision.inc.c"
-UNUSED static const u64 binid_4 = 4;
+UNUSED static const u64 binid_4 = 4;*/
 
 #include "door/model.inc.c"
 #include "door/anims/data.inc.c"
@@ -87,3 +87,6 @@ UNUSED static const u64 binid_21 = 21;
 
 #include "tree/model.inc.c"
 UNUSED static const u64 binid_22 = 22;
+
+#include "warp_pipe/model.inc.c"
+#include "warp_pipe/collision.inc.c"

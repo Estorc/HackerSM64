@@ -660,8 +660,8 @@ struct LakituState {
     /*0x5A*/ s16 shakePitchVel;
     /*0x5C*/ s16 shakePitchDecay;
 
-    /*0x60*/ Vec3f unusedVec1;
-    /*0x6C*/ Vec3s unusedVec2;
+    /*0x60*/ Vec3f forcedPos;
+    /*0x6C*/ Vec3s forcedRotation;
     /*0x72*/ u8 filler3[8];
 
     /// Used to rotate the screen when rendering.
@@ -674,6 +674,10 @@ struct LakituState {
     /*0x80*/ Vec3f focus;
     /// The actual position the game is rendered from.
     /*0x8C*/ Vec3f pos;
+
+    s16 forcedRoll;
+    s16 forcedYaw;
+    s16 forcedPitch;
 
     // Shake variables: See above description
     /*0x98*/ s16 shakeRollPhase;
@@ -716,12 +720,15 @@ extern u8 gRecentCutscene;
 
 // TODO: sort all of this extremely messy shit out after the split
 
+void reset_pan_distance(UNUSED struct Camera *c);
+void set_fixed_mode_base_position(f32 x, f32 y, f32 z);
 void set_camera_shake_from_hit(s16 shake);
 void set_environmental_camera_shake(s16 shake);
 void set_camera_shake_from_point(s16 shake, f32 posX, f32 posY, f32 posZ);
 void move_mario_head_c_up(UNUSED struct Camera *c);
 void transition_next_state(UNUSED struct Camera *c, s16 frames);
 void set_camera_mode(struct Camera *c, s16 mode, s16 frames);
+
 void update_camera(struct Camera *c);
 void reset_camera(struct Camera *c);
 void init_camera(struct Camera *c);
@@ -765,6 +772,11 @@ void set_pitch_shake_from_point(s16 mag, s16 decay, s16 inc, f32 maxDist, f32 po
 void shake_camera_pitch(Vec3f pos, Vec3f focus);
 void shake_camera_yaw(Vec3f pos, Vec3f focus);
 void shake_camera_roll(s16 *roll);
+
+void rotate_camera_pitch(Vec3f pos, Vec3f focus);
+void rotate_camera_yaw(Vec3f pos, Vec3f focus);
+void rotate_camera_roll(s16 *roll);
+
 s32 offset_yaw_outward_radial(struct Camera *c, s16 areaYaw);
 void play_camera_buzz_if_cdown(void);
 void play_camera_buzz_if_cbutton(void);
@@ -802,6 +814,9 @@ void set_fov_function(u8 func);
 void cutscene_set_fov_shake_preset(u8 preset);
 void set_fov_shake_from_point_preset(u8 preset, f32 posX, f32 posY, f32 posZ);
 void obj_rotate_towards_point(struct Object *obj, Vec3f point, s16 pitchOff, s16 yawOff, s16 pitchDiv, s16 yawDiv);
+s32 update_fixed_camera(struct Camera *c, Vec3f focus, Vec3f pos);
+void set_lakitu_old_position(Vec3f newPos);
+void set_lakitu_old_focus(Vec3f newPos);
 
 Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context);
 

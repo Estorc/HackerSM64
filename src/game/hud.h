@@ -42,7 +42,7 @@ enum CameraHUDLUT {
     GLYPH_CAM_ARROW_DOWN
 };
 
-void set_hud_camera_status(s16 status);
+//void set_hud_camera_status(s16 status);
 void render_hud(void);
 
 #endif // HUD_H

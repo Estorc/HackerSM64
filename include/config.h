@@ -20,5 +20,10 @@
 #include "config/config_rom.h"
 
 
+#define PEACH_SKIP
+#define SKIP_TITLE_SCREEN
+
+
+
 /* WARNING: Compatibility safeguards - don't remove this file unless you know what you're doing */
 #include "config/config_safeguards.h"

@@ -119,6 +119,8 @@ enum MarioInput {
     INPUT_B_PRESSED              = /* 0x2000 */ (1 << 13),
     INPUT_Z_DOWN                 = /* 0x4000 */ (1 << 14),
     INPUT_Z_PRESSED              = /* 0x8000 */ (1 << 15),
+    INPUT_L_DOWN                 = /* 0x4000 */ (1 << 16),
+    INPUT_L_PRESSED              = /* 0x8000 */ (1 << 17),
 };
 enum GroundStep {
     GROUND_STEP_LEFT_GROUND,
@@ -195,8 +197,8 @@ enum MarioFlags {
     MARIO_METAL_SHOCK         = /* 0x00000040 */ (1 <<  6),
     MARIO_TELEPORTING         = /* 0x00000080 */ (1 <<  7),
     MARIO_JUMPING             = /* 0x00000100 */ (1 <<  8),
-    MARIO_UNUSED_9            = /* 0x00000200 */ (1 <<  9),
-    MARIO_UNUSED_10           = /* 0x00000400 */ (1 << 10),
+    MARIO_TURBODASH           = /* 0x00000200 */ (1 <<  9),
+    MARIO_DASHED_ON_WALL      = /* 0x00000400 */ (1 << 10),
     MARIO_UNUSED_11           = /* 0x00000800 */ (1 << 11),
     MARIO_UNUSED_12           = /* 0x00001000 */ (1 << 12),
     MARIO_NO_PURPLE_SWITCH    = /* 0x00002000 */ (1 << 13),
@@ -258,9 +260,41 @@ enum MarioActionFlags {
     ACT_FLAG_PAUSE_EXIT                 = /* 0x08000000 */ (1 << 27),
     ACT_FLAG_SWIMMING_OR_FLYING         = /* 0x10000000 */ (1 << 28),
     ACT_FLAG_WATER_OR_TEXT              = /* 0x20000000 */ (1 << 29),
-    ACT_FLAG_UNUSED                     = /* 0x40000000 */ (1 << 30),
+    ACT_FLAG_DASHING                    = /* 0x40000000 */ (1 << 30),
     ACT_FLAG_THROWING                   = /* 0x80000000 */ (1 << 31),
 };
+
+enum MarioMovementsFlags {
+    RAIL_FIXED_MOVEMENT                 = /* 0x00000100 */ (1 <<  8),
+    UNUSED_MOVEMENT_001                 = /* 0x00000200 */ (1 <<  9),
+    UNUSED_MOVEMENT_002                 = /* 0x00000400 */ (1 << 10),
+    UNUSED_MOVEMENT_003                 = /* 0x00000800 */ (1 << 11),
+    UNUSED_MOVEMENT_004                 = /* 0x00001000 */ (1 << 12),
+    UNUSED_MOVEMENT_005                 = /* 0x00002000 */ (1 << 13),
+    UNUSED_MOVEMENT_006                 = /* 0x00004000 */ (1 << 14),
+    UNUSED_MOVEMENT_007                 = /* 0x00008000 */ (1 << 15),
+    UNUSED_MOVEMENT_008                 = /* 0x00010000 */ (1 << 16),
+    UNUSED_MOVEMENT_009                 = /* 0x00020000 */ (1 << 17),
+    UNUSED_MOVEMENT_010                 = /* 0x00040000 */ (1 << 18),
+    UNUSED_MOVEMENT_011                 = /* 0x00080000 */ (1 << 19),
+    UNUSED_MOVEMENT_012                 = /* 0x00100000 */ (1 << 20),
+    UNUSED_MOVEMENT_013                 = /* 0x00200000 */ (1 << 21),
+    UNUSED_MOVEMENT_014                 = /* 0x00400000 */ (1 << 22),
+    UNUSED_MOVEMENT_015                 = /* 0x00800000 */ (1 << 23),
+    UNUSED_MOVEMENT_016                 = /* 0x01000000 */ (1 << 24),
+    UNUSED_MOVEMENT_017                 = /* 0x02000000 */ (1 << 25),
+    UNUSED_MOVEMENT_018                 = /* 0x04000000 */ (1 << 26),
+    UNUSED_MOVEMENT_019                 = /* 0x08000000 */ (1 << 27),
+    UNUSED_MOVEMENT_020                 = /* 0x10000000 */ (1 << 28),
+    UNUSED_MOVEMENT_021                 = /* 0x20000000 */ (1 << 29),
+    UNUSED_MOVEMENT_022                 = /* 0x40000000 */ (1 << 30),
+    UNUSED_MOVEMENT_023                 = /* 0x80000000 */ (1 << 31),
+};
+
+#define NORMAL_MOVEMENT                0x00000000 // (0x00)
+#define C2D_SCENE_MOVEMENT             0x00000101 // (0x01 | RAIL_FIXED_MOVEMENT)
+#define C2D_CYLINDER_SCENE_MOVEMENT    0x00000102 // (0x02 | RAIL_FIXED_MOVEMENT)
+#define ROCKET_MOVEMENT                0x00000103 // (0x03 | RAIL_FIXED_MOVEMENT)
 
 #define ACT_UNINITIALIZED              0x00000000 // (0x000)
 
@@ -369,8 +403,8 @@ enum MarioActionFlags {
 #define ACT_TRIPLE_JUMP_LAND           0x04000478 // (0x078 | ACT_FLAG_MOVING | ACT_FLAG_ALLOW_FIRST_PERSON)
 #define ACT_LONG_JUMP_LAND             0x00000479 // (0x079 | ACT_FLAG_MOVING)
 #define ACT_BACKFLIP_LAND              0x0400047A // (0x07A | ACT_FLAG_MOVING | ACT_FLAG_ALLOW_FIRST_PERSON)
-#define ACT_UNUSED_07B                 0x0000007B // (0x07B)
-#define ACT_UNUSED_07C                 0x0000007C // (0x07C)
+#define ACT_DASHING                    0x4000047B // (0x07B | ACT_FLAG_MOVING)
+#define ACT_START_HYPER_JUMP           0x0000047C // (0x07C | ACT_FLAG_MOVING)
 #define ACT_UNUSED_07D                 0x0000007D // (0x07D)
 #define ACT_UNUSED_07E                 0x0000007E // (0x07E)
 #define ACT_UNUSED_07F                 0x0000007F // (0x07F)
@@ -390,9 +424,9 @@ enum MarioActionFlags {
 #define ACT_FREEFALL                   0x0100088C // (0x08C | ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION)
 #define ACT_TOP_OF_POLE_JUMP           0x0300088D // (0x08D | ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT)
 #define ACT_BUTT_SLIDE_AIR             0x0300088E // (0x08E | ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT)
-#define ACT_UNUSED_08F                 0x0000008F // (0x08F)
-#define ACT_UNUSED_090                 0x00000090 // (0x090)
-#define ACT_UNUSED_091                 0x00000091 // (0x091)
+#define ACT_HYPER_JUMP                 0x0000088F // (0x08F | ACT_FLAG_AIR)
+#define ACT_ANTI_GRAVITY_OLIVE         0x00000890 // (0x090 | ACT_FLAG_AIR)
+#define ACT_ROCKET                     0x00000891 // (0x091 | ACT_FLAG_AIR)
 #define ACT_UNUSED_092                 0x00000092 // (0x092)
 #define ACT_UNUSED_093                 0x00000093 // (0x093)
 #define ACT_FLYING_TRIPLE_JUMP         0x03000894 // (0x094 | ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT)
@@ -432,12 +466,12 @@ enum MarioActionFlags {
 #define ACT_SOFT_BONK                  0x010208B6 // (0x0B6 | ACT_FLAG_AIR | ACT_FLAG_INVULNERABLE | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION)
 #define ACT_LAVA_BOOST                 0x010208B7 // (0x0B7 | ACT_FLAG_AIR | ACT_FLAG_INVULNERABLE | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION)
 #define ACT_GETTING_BLOWN              0x010208B8 // (0x0B8 | ACT_FLAG_AIR | ACT_FLAG_INVULNERABLE | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION)
-#define ACT_UNUSED_0B9                 0x000000B9 // (0x0B9)
+#define ACT_DASHING_IN_AIR             0x430008B9 // (0x0B9 | ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT)
 
 #define ACT_UNUSED_0BC                 0x000000BC // (0x0BC)
 #define ACT_THROWN_FORWARD             0x010208BD // (0x0BD | ACT_FLAG_AIR | ACT_FLAG_INVULNERABLE | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION)
 #define ACT_THROWN_BACKWARD            0x010208BE // (0x0BE | ACT_FLAG_AIR | ACT_FLAG_INVULNERABLE | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION)
-#define ACT_UNUSED_0BF                 0x000000BF // (0x0BF)
+#define ACT_GPJUMP                     0x108008BF // (0x0BF | ACT_FLAG_AIR | ACT_FLAG_ATTACKING | ACT_FLAG_SWIMMING_OR_FLYING)
 
 // group 0x0C0: submerged actions
 #define ACT_WATER_IDLE                 0x380022C0 // (0x0C0 | ACT_FLAG_STATIONARY | ACT_FLAG_SWIMMING | ACT_FLAG_PAUSE_EXIT | ACT_FLAG_SWIMMING_OR_FLYING | ACT_FLAG_WATER_OR_TEXT)

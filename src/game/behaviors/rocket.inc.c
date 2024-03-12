@@ -53,6 +53,7 @@ void bhv_rocket_loop(void) {
         set_mario_action(gMarioState, ACT_ROCKET, 0);
         set_camera_mode(gCamera, CAMERA_MODE_FIXED, 0);
         gMarioState->movementType = ROCKET_MOVEMENT;
+        o->oFaceAngleRoll = 0;
         o->oAction = 1;
     }
 
@@ -101,12 +102,12 @@ void bhv_rocket_loop(void) {
             calc_mario_goal_pos();
             gMarioState->faceAngle[1] = o->oFaceAngleYaw;
             gMarioState->faceAngle[0] = o->oFaceAnglePitch;
-            //if (gMarioState->action != ACT_ANTI_GRAVITY_OLIVE) o->oAction = 2;
 
 
             if (o->oPosX < o->oHomeX - 0x6600 - 0x1000) {
                 o->oPosX += 23970;
                 calc_mario_goal_pos();
+                gMarioState->marioObj->header.gfx.pos[0] += 23970;
 
                 uintptr_t *behaviorAddr = segmented_to_virtual(bhvRocketExplosion);
                 struct ObjectNode *listHead = &gObjectLists[get_object_list_from_behavior(behaviorAddr)];
@@ -174,17 +175,18 @@ void bhv_rocket_loop(void) {
                     cGoalPos[0],
                     cGoalPos[1],
                     cGoalPos[2]
-                );
-                vec3f_copy(gPlayerCameraState[0].pos, gMarioState->pos);*/
-                //update_fixed_camera(gCamera, gCamera->focus, gCamera->pos);
+                );*/
+
+                gPlayerCameraState[0].pos[0] += 23970;
                 gCamera->pos[0] += 23970;
                 gCamera->focus[0] += 23970;
                 gLakituState.goalPos[0] += 23970;
+                gLakituState.goalFocus[0] += 23970;
                 get_lakitu_old_position()[0] += 23970;
                 get_lakitu_old_focus()[0] += 23970;
                 gLakituState.pos[0] += 23970;
+                gLakituState.focus[0] += 23970;
                 gLakituState.curPos[0] += 23970;
-                gCamera->focus[0] += 23970;
                 gLakituState.curFocus[0] += 23970;
             }
             calc_cam_goal_pos(cGoalPos, 0);

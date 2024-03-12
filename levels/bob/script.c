@@ -49,7 +49,7 @@ const LevelScript level_bob_entry[] = {
 	/* Fast64 begin persistent block [level commands] */
 	/* Fast64 end persistent block [level commands] */
 
-	AREA(1, bob_area_1),
+	AREA(3, bob_area_3),
 		WARP_NODE(0xF3, LEVEL_BOB, 0x01, 0xE9, WARP_NO_CHECKPOINT),
 		WARP_NODE(0xF0, LEVEL_CASTLE, 0x01, 50, WARP_NO_CHECKPOINT),
 		WARP_NODE(0xF1, LEVEL_BOB, 0x01, 0xE9, WARP_NO_CHECKPOINT),
@@ -88,8 +88,8 @@ const LevelScript level_bob_entry[] = {
 		OBJECT(MODEL_JOHN_PILLAR, 4239, 9991, 14202, 0, 0, 0, 0x00000000, bhvJohnPillar),
 		MARIO_POS(0x01, -90, 12983, 13070, 14201),
 		OBJECT(MODEL_NONE, 13173, 11451, 14187, 0, -90, 0, (3 << 24) | (2 << 16), bhvSignOnWall),
-		TERRAIN(bob_area_1_collision),
-		MACRO_OBJECTS(bob_area_1_macro_objs),
+		TERRAIN(bob_area_3_collision),
+		MACRO_OBJECTS(bob_area_3_macro_objs),
 		SET_BACKGROUND_MUSIC(0x00, SEQ_LEVEL_SPOOKY),
 		TERRAIN_TYPE(TERRAIN_SLIDE),
 		/* Fast64 begin persistent block [area commands] */
@@ -116,7 +116,7 @@ const LevelScript level_bob_entry[] = {
 		/* Fast64 end persistent block [area commands] */
 	END_AREA(),
 
-	AREA(3, bob_area_3),
+	AREA(1, bob_area_1),
 		WARP_NODE(0xF3, LEVEL_BOB, 0x03, 0xE9, WARP_NO_CHECKPOINT),
 		WARP_NODE(0xF0, LEVEL_CASTLE, 0x03, 50, WARP_NO_CHECKPOINT),
 		WARP_NODE(0xF1, LEVEL_BOB, 0x03, 0xE9, WARP_NO_CHECKPOINT),
@@ -129,8 +129,8 @@ const LevelScript level_bob_entry[] = {
 		OBJECT(MODEL_NONE, 11889, 4681, -136, 0, 90, 0, 0x00000000, bhvRocketObstacle),
 		OBJECT(MODEL_PIZZA_FACE, 29162, 4137, -132, 0, 0, 0, 0x00000000, bhvPizzaFace),
 		OBJECT(MODEL_ROCKET, 24475, 4569, -137, 0, -90, 0, 0x00000000, bhvRocket),
-		TERRAIN(bob_area_3_collision),
-		MACRO_OBJECTS(bob_area_3_macro_objs),
+		TERRAIN(bob_area_1_collision),
+		MACRO_OBJECTS(bob_area_1_macro_objs),
 		SET_BACKGROUND_MUSIC(0x00, SEQ_PIZZA_TIME),
 		TERRAIN_TYPE(TERRAIN_SLIDE),
 		/* Fast64 begin persistent block [area commands] */

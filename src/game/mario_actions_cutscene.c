@@ -1004,7 +1004,7 @@ s32 act_emerge_from_pipe(struct MarioState *m) {
     }
 #endif
 
-    if (launch_mario_until_land(m, ACT_JUMP_LAND_STOP, MARIO_ANIM_SINGLE_JUMP, 8.0f)) {
+    if (launch_mario_until_land(m, ACT_JUMP_LAND_STOP, MARIO_ANIM_SINGLE_JUMP, 16.0f - (gPlayerSpawnInfos[0].startAngle[0] >> 6))) { 
         mario_set_forward_vel(m, 0.0f);
         play_mario_landing_sound(m, SOUND_ACTION_TERRAIN_LANDING);
     }

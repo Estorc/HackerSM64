@@ -39,6 +39,14 @@ void bhv_2d_cylinder_scene_loop(void) {
         approach_vec3f_asymptotic(gMarioState->pos, goalPos, 0.25f, 0.25f, 0.25f);
         vec3f_set_dist_and_angle(origin, cPos, GET_BPARAM1(o->oBehParams)*100 + (f32)GET_BPARAM3(o->oBehParams)*1000.0f * (GET_BPARAM4(o->oBehParams) ? -1 : 1), pitch, yaw);
 
+        if (gMarioState->action & ACT_FLAG_MOVING) {
+            if (abs_angle_diff(gMarioState->intendedYaw+0x4000, gLakituState.forcedYaw) < abs_angle_diff(gMarioState->intendedYaw-0x4000, gLakituState.forcedYaw)) gMarioState->faceAngle[1] = gLakituState.forcedYaw - 0x4000;
+            else gMarioState->faceAngle[1] = gLakituState.forcedYaw + 0x4000;
+        } else {
+            if (abs_angle_diff(gMarioState->faceAngle[1]+0x4000, gLakituState.forcedYaw) < abs_angle_diff(gMarioState->faceAngle[1]-0x4000, gLakituState.forcedYaw)) gMarioState->faceAngle[1] = gLakituState.forcedYaw - 0x4000;
+            else gMarioState->faceAngle[1] = gLakituState.forcedYaw + 0x4000;
+        }
+
         set_fixed_mode_base_position(
             cPos[0],
             gMarioState->pos[1]+500.0f,

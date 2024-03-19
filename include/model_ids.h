@@ -426,8 +426,8 @@
 // group 17
 #define MODEL_SWOOP                       0x64        // swoop_geo
 #define MODEL_SCUTTLEBUG                  0x65        // scuttlebug_geo
-#define MODEL_MR_I_IRIS                   0x66        // mr_i_iris_geo
-#define MODEL_MR_I_BODY                   0x67        // mr_i_geo
+#define MODEL_MR_I_IRIS                   0x6A        // mr_i_iris_geo
+#define MODEL_MR_I_BODY                   0x6B        // mr_i_geo
 #define MODEL_MR_I MODEL_MR_I_BODY // backwards compatibility
 #define MODEL_DORRIE                      0x68        // dorrie_geo
 
@@ -563,6 +563,7 @@
 #define MODEL_ROCKET_OBSTACLE_2           0xEF        // rocket_obstacle_2_geo
 #define MODEL_ROCKET_OBSTACLE_3           0xF0        // rocket_obstacle_3_geo
 #define MODEL_ROCKET_OBSTACLE_4           0xF1        // rocket_obstacle_4_geo
+#define MODEL_MARIO_KART                  0xF2        // kart_geo
 
 // Menu Models (overwrites Level Geometry IDs)
 #define MODEL_MAIN_MENU_MARIO_SAVE_BUTTON         MODEL_LEVEL_GEOMETRY_03   // main_menu_geo_0001D0

@@ -2,6 +2,7 @@
 #define __FASTTEXT_H__
 
 void drawSmallString_impl(Gfx**, int, int, const char*, int, int , int);
+void drawMenuString_impl(Gfx**, int, int, const char*, int, int , int);
 
 static inline void drawSmallString(Gfx **dl, int x, int y, const char* string) {
   drawSmallString_impl(dl, x, y, string, 255, 255, 255);
@@ -9,6 +10,10 @@ static inline void drawSmallString(Gfx **dl, int x, int y, const char* string) {
 
 static inline void drawSmallStringCol(Gfx **dl, int x, int y, const char* string, int r, int g, int b) {
   drawSmallString_impl(dl, x, y, string, r, g, b);
+}
+
+static inline void drawMenuStringCol(Gfx **dl, int x, int y, const char* string, int r, int g, int b) {
+  drawMenuString_impl(dl, x, y, string, r, g, b);
 }
 
 #endif

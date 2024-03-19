@@ -1898,7 +1898,9 @@ void init_mario(void) {
         PizzaFace->oPosY = gMarioState->pos[1];
         PizzaFace->oPosZ = gMarioState->pos[2];
     }
-    if (!cur_obj_find_nearest_object_with_behavior(bhvMarioDashClone, &distWithParticle)) spawn_object(gMarioState->marioObj, MODEL_MARIO_PARTICLE, bhvMarioDashClone);
+    if (!cur_obj_find_nearest_object_with_behavior(bhvMarioDashClone, &distWithParticle)) {
+        spawn_object(gMarioState->marioObj, MODEL_MARIO_PARTICLE, bhvMarioDashClone);
+    }
 
     Vec3s capPos;
     if (save_file_get_cap_pos(capPos)) {

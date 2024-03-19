@@ -13,11 +13,22 @@ __asm__(
  ".balign 16\n"
  ".global fast_font\n"
  "fast_font:\n"
- ".incbin \"src/game/newfont2_swapped.bin\"\n"
+ ".incbin \"textures/fonts/newfont2_swapped.bin\"\n"
  ".previous\n"
 );
 
 extern u8 fast_font[];
+
+__asm__(
+ ".section \".rodata\", \"a\", @progbits\n"
+ ".balign 16\n"
+ ".global menu_font\n"
+ "menu_font:\n"
+ ".incbin \"textures/fonts/newfont3.bin\"\n"
+ ".previous\n"
+);
+
+extern u8 menu_font[];
 
 int computeS(unsigned char letter) {
     int idx = letter;  
@@ -53,6 +64,50 @@ void drawSmallString_impl(Gfx **dl, int x, int y, const char* string, int r, int
     Gfx *dlHead = *dl;
 
     gDPLoadTextureBlock_4bS(dlHead++, fast_font, G_IM_FMT_IA, 672, 12, 0, G_TX_MIRROR | G_TX_WRAP, G_TX_MIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+    gDPSetPrimColor(dlHead++, 0, 0, r, g, b, 255);
+    gDPSetCombineMode(dlHead++, G_CC_TEXT, G_CC_TEXT);
+    gDPPipeSync(dlHead++);
+
+    while (string[i] != '\0') {
+        unsigned int cur_char = string[i];
+        s32 goddamnJMeasure = string[i] == 'j' ? -1 : 0;
+
+        if (cur_char == '\n') {
+            xPos = x;
+            yPos += 12;
+            i++;
+            continue;
+        }
+
+        if (cur_char == '\t') {
+            int xDist = xPos - x + 1;
+            int tabCount = (xDist + TAB_WIDTH - 1) / TAB_WIDTH;
+            xPos = tabCount * TAB_WIDTH + x;
+        } else {
+            if (cur_char != ' ') {
+                s = computeS(cur_char);
+                gSPTextureRectangle(dlHead++, (xPos + 0) << 2, (yPos + 0) << 2, (xPos + 8) << 2, (yPos + 12) << 2, 0, (s << 5) - goddamnJMeasure, 0, 1 << 10, 1 << 10);
+            }
+            xPos += fast_text_font_kerning[cur_char - ' '];
+        }
+
+        i++;
+    }
+    gDPSetPrimColor(dlHead++, 0, 0, 255, 255, 255, 255);
+    gDPPipeSync(dlHead++);
+
+    *dl = dlHead;
+}
+
+
+void drawMenuString_impl(Gfx **dl, int x, int y, const char* string, int r, int g, int b) {
+    int i = 0;
+    int xPos = x;
+    int yPos = y;
+    int s = 0;
+    Gfx *dlHead = *dl;
+
+    gDPLoadTextureBlock_4bS(dlHead++, menu_font, G_IM_FMT_IA, 672, 12, 0, G_TX_MIRROR | G_TX_WRAP, G_TX_MIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
     gDPSetPrimColor(dlHead++, 0, 0, r, g, b, 255);
     gDPSetCombineMode(dlHead++, G_CC_TEXT, G_CC_TEXT);
     gDPPipeSync(dlHead++);

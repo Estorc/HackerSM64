@@ -358,8 +358,8 @@ void init_mario_after_warp(void) {
         gPlayerSpawnInfos[0].startPos[1] = (s16) spawnNode->object->oPosY;
         gPlayerSpawnInfos[0].startPos[2] = (s16) spawnNode->object->oPosZ;
 
-        gPlayerSpawnInfos[0].startAngle[0] = 0;
-        gPlayerSpawnInfos[0].startAngle[1] = spawnNode->object->oMoveAngleYaw;
+        gPlayerSpawnInfos[0].startAngle[0] = (marioSpawnType == MARIO_SPAWN_PIPE) * spawnNode->object->oMoveAnglePitch;
+        gPlayerSpawnInfos[0].startAngle[1] = spawnNode->object->oMoveAngleYaw + (marioSpawnType == MARIO_SPAWN_PIPE) * 0x8000;
         gPlayerSpawnInfos[0].startAngle[2] = 0;
 
         if (marioSpawnType == MARIO_SPAWN_DOOR_WARP) {
@@ -384,6 +384,7 @@ void init_mario_after_warp(void) {
 
     switch (marioSpawnType) {
         case MARIO_SPAWN_PIPE:
+            gPlayerSpawnInfos[0].startAngle[1] += 0x4000;
             play_transition(WARP_TRANSITION_FADE_FROM_STAR, 0x10, 0x00, 0x00, 0x00);
             break;
         case MARIO_SPAWN_DOOR_WARP:

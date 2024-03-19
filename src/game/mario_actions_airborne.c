@@ -2084,6 +2084,7 @@ s32 act_gpjump(struct MarioState *m) {
     return FALSE;
 }
 
+ #include "game/print.h"
 
 s32 act_anti_gravity_olive(struct MarioState *m) {
     if (m->input & INPUT_Z_PRESSED) {
@@ -2106,8 +2107,8 @@ s32 act_anti_gravity_olive(struct MarioState *m) {
     m->vel[2] *= 3.0f;
     switch (perform_air_step(m, 0)) {
         case AIR_STEP_HIT_WALL:
-            m->vel[0] *= -0.8f;
-            m->vel[2] *= -0.8f;
+            m->forwardVel /= 2;
+            m->faceAngle[1] = m->wallYaw - (s16)(m->faceAngle[1] - m->wallYaw) + 0x8000;
             break;
     }
     return FALSE;
@@ -2178,7 +2179,8 @@ s32 act_dashing_in_air(struct MarioState *m) {
                 m->flags &= ~MARIO_DASHED_ON_WALL;
                 struct Surface *floor;
                 f32 floorHeight = find_floor(m->pos[0] + m->vel[0], m->pos[1] + m->vel[1], m->pos[2] + m->vel[2], &floor);
-                m->pos[1] = floorHeight;
+                if (m->pos[1] < floorHeight + 100)
+                    m->pos[1] = floorHeight;
             }
             break;
 

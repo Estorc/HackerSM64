@@ -26,6 +26,9 @@ void bhv_star_door_loop(void);
 void bhv_mr_i_iris_loop(void);
 void bhv_mr_i_body_loop(void);
 void bhv_mr_i_particle_loop(void);
+void bhv_large_mr_i_iris_loop(void);
+void bhv_large_mr_i_body_loop(void);
+void bhv_large_mr_i_particle_loop(void);
 void bhv_piranha_particle_loop(void);
 void bhv_giant_pole_loop(void);
 void bhv_pole_init(void);
@@ -576,6 +579,9 @@ void bhv_init_rocket(void);
 void bhv_rocket_loop(void);
 void bhv_rocket_obstacle_loop(void);
 void bhv_init_rocket_obstacle(void);
+void bhv_init_kart(void);
+void bhv_kart_loop(void);
+Gfx *kartWheel(s32 callContext, struct GraphNode *node, UNUSED Mat4 *mtx);
 
 
 Gfx *geo_move_mario_part_from_parent(s32 callContext, UNUSED struct GraphNode *node, Mat4 mtx);

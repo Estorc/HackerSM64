@@ -963,9 +963,12 @@ Gfx rocket_obstacle_2_Cylinder_002_mesh_layer_1_tri_0[] = {
 };
 
 
-Gfx mat_rocket_obstacle_2_f3dlite_material_039[] = {
+Gfx mat_rocket_obstacle_2_f3dlite_material_039_layer1[] = {
 	gsDPPipeSync(),
-	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT, TEXEL0, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT),
+	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, COMBINED, 0, 0, 0, ENVIRONMENT),
+	gsSPSetGeometryMode(G_FOG),
+	gsDPSetCycleType(G_CYC_2CYCLE),
+	gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_OPA_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
     gsSPLightColor(LIGHT_1, 0xffbfa3ff),
     gsSPLightColor(LIGHT_2, 0x7f5e4fff),
@@ -977,9 +980,18 @@ Gfx mat_rocket_obstacle_2_f3dlite_material_039[] = {
 	gsSPEndDisplayList(),
 };
 
+Gfx mat_revert_rocket_obstacle_2_f3dlite_material_039_layer1[] = {
+	gsDPPipeSync(),
+	gsSPClearGeometryMode(G_FOG),
+	gsDPSetCycleType(G_CYC_1CYCLE),
+	gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),
+	gsSPEndDisplayList(),
+};
+
 Gfx rocket_obstacle_2_Cylinder_002_mesh_layer_1[] = {
-	gsSPDisplayList(mat_rocket_obstacle_2_f3dlite_material_039),
+	gsSPDisplayList(mat_rocket_obstacle_2_f3dlite_material_039_layer1),
 	gsSPDisplayList(rocket_obstacle_2_Cylinder_002_mesh_layer_1_tri_0),
+	gsSPDisplayList(mat_revert_rocket_obstacle_2_f3dlite_material_039_layer1),
 	gsSPEndDisplayList(),
 };
 

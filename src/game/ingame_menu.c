@@ -26,6 +26,7 @@
 #include "config.h"
 #include "puppycam2.h"
 #include "main.h"
+#include "fasttext.h"
 
 #ifdef VERSION_EU
 #undef LANGUAGE_FUNCTION
@@ -1751,30 +1752,23 @@ void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
 void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
     u8 textContinue[] = { TEXT_CONTINUE };
     u8 textExitCourse[] = { TEXT_EXIT_COURSE };
-    u8 textCameraAngleR[] = { TEXT_CAMERA_ANGLE_R };
 
     handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 3);
 
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+    Gfx* dlHead = gDisplayListHead;
+    gDPPipeSync(dlHead++);
+    gDPSetCycleType(dlHead++, G_CYC_1CYCLE);
+    gDPSetRenderMode(dlHead++, G_RM_TEX_EDGE, G_RM_TEX_EDGE2);
+    gDPSetTexturePersp(dlHead++, G_TP_NONE);
+    gDPSetTextureFilter(dlHead++, G_TF_POINT);
+    gDPSetTextureLUT(dlHead++, G_TT_NONE);
+    drawMenuStringCol(&dlHead, x + 10, y*3/2 - 2, "Continue\nExit Course\nOptions", 255, 255, 255);
+    gDisplayListHead = dlHead;
+
+    create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((*index - 1) * yIndex)) - Y_VAL8, 0);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
-
-    print_generic_string(x + 10, y - 2, LANGUAGE_ARRAY(textContinue));
-    print_generic_string(x + 10, y - 17, LANGUAGE_ARRAY(textExitCourse));
-
-    if (*index != MENU_OPT_CAMERA_ANGLE_R) {
-        print_generic_string(x + 10, y - 33, LANGUAGE_ARRAY(textCameraAngleR));
-        gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
-
-        create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((*index - 1) * yIndex)) - Y_VAL8, 0);
-
-        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
-        gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
-        gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-    }
-
-    if (*index == MENU_OPT_CAMERA_ANGLE_R) {
-        render_pause_camera_options(x - 42, y - 42, &gDialogCameraAngleIndex, 110);
-    }
+    gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
+    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
 }
 
 void render_pause_castle_menu_box(s16 x, s16 y) {

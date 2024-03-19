@@ -6,7 +6,7 @@ void bhv_init_pizza_face(void) {
 
 void bhv_pizza_face_loop(void) {
     if (o->oOpacity < 255) {
-        o->oOpacity += 5;
+        o->oOpacity += 2;
         if (o->oOpacity >= 255) o->oOpacity = 255;
     } else {
         o->oPosX += (gMarioState->pos[0] - o->oPosX)/50;

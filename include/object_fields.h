@@ -1260,6 +1260,10 @@
 
 
 #define /*0x1B0*/ oCageAnimKey          OBJECT_FIELD_S16(0x4A, 0)
+#define /*0x108*/ oLastFloorNormalVec   OBJECT_FIELD_F32(0x1D)
+#define /*0x108*/ oLastFloorNormalX     OBJECT_FIELD_F32(0x1D)
+#define /*0x10C*/ oLastFloorNormalY     OBJECT_FIELD_F32(0x21)
+#define /*0x110*/ oLastFloorNormalZ     OBJECT_FIELD_F32(0x25)
 
 
 /*Custom general defines:

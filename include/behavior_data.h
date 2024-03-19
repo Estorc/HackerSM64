@@ -554,5 +554,9 @@ extern const BehaviorScript bhv2DCylinderScene[];
 extern const BehaviorScript bhvRocket[];
 extern const BehaviorScript bhvRocketExplosion[];
 extern const BehaviorScript bhvRocketObstacle[];
+extern const BehaviorScript bhvKart[];
+extern const BehaviorScript bhvLargeMrI[];
+extern const BehaviorScript bhvLargeMrIIris[];
+extern const BehaviorScript bhvLargeMrIParticle[];
 
 #endif // BEHAVIOR_DATA_H

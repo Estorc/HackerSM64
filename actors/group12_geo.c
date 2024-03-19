@@ -13,3 +13,5 @@
 #include "bowser/geo.inc.c"
 #include "bomb/geo.inc.c"
 #include "impact_smoke/geo.inc.c"
+#include "mr_i_eyeball/geo.inc.c"
+#include "mr_i_iris/geo.inc.c"

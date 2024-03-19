@@ -44,6 +44,8 @@ typedef struct Controller {
     /*0x18*/ OSContStatus* statusData;    // Pointer to the controller status data in gControllerStatuses.
     /*0x1C*/ OSContPadEx* controllerData; // Pointer to the raw input data in gControllerPads.
     /*0x20*/ s32 port;                    // The port index this controller is plugged into [0, 3].
+    /*0x2x*/ u8 prevStick;
+    /*0x2x*/ u8 timer;
 } Controller; /*0x24*/
 
 // -- Booleans --

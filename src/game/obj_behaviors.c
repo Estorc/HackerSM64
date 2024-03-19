@@ -208,7 +208,11 @@ void obj_orient_graph(struct Object *obj, f32 normalX, f32 normalY, f32 normalZ)
     }
 
     vec3f_copy_y_off(objVisualPosition, &obj->oPosVec, obj->oGraphYOffset);
-    vec3f_set(surfaceNormals, normalX, normalY, normalZ);
+    vec3f_set(surfaceNormals, obj->oLastFloorNormalX, obj->oLastFloorNormalY, obj->oLastFloorNormalZ);
+    vec3f_set(surfaceNormals, surfaceNormals[0] + (normalX-surfaceNormals[0])/6, surfaceNormals[1] + (normalY-surfaceNormals[1])/6, surfaceNormals[2] + (normalZ-surfaceNormals[2])/6);
+    obj->oLastFloorNormalX = surfaceNormals[0];
+    obj->oLastFloorNormalY = surfaceNormals[1];
+    obj->oLastFloorNormalZ = surfaceNormals[2];
 
     mtxf_align_terrain_normal(*throwMatrix, surfaceNormals, objVisualPosition, obj->oFaceAngleYaw);
     obj->header.gfx.throwMatrix = throwMatrix;
@@ -257,9 +261,9 @@ void calc_new_obj_vel_and_pos_y(struct Surface *objFloor, f32 objFloorY, f32 obj
         }
     }
 
+    obj_orient_graph(o, floor_nX, floor_nY, floor_nZ);
     //! (Obj Position Crash) If you got an object with height past 2^31, the game would crash.
     if ((s32) o->oPosY >= (s32) objFloorY && (s32) o->oPosY < (s32) objFloorY + 37) {
-        obj_orient_graph(o, floor_nX, floor_nY, floor_nZ);
 
         // Adds horizontal component of gravity for horizontal speed.
         f32 nxz = sqr(floor_nX) + sqr(floor_nZ);
@@ -313,9 +317,9 @@ void calc_new_obj_vel_and_pos_y_underwater(struct Surface *objFloor, f32 floorY,
     if (o->oForwardVel > 12.5f && (waterY + 30.0f) > o->oPosY && (waterY - 30.0f) < o->oPosY) {
         o->oVelY = -o->oVelY;
     }
-
+    obj_orient_graph(o, floor_nX, floor_nY, floor_nZ);
     if ((s32) o->oPosY >= (s32) floorY && (s32) o->oPosY < (s32) floorY + 37) {
-        obj_orient_graph(o, floor_nX, floor_nY, floor_nZ);
+        
 
         // Adds horizontal component of gravity for horizontal speed.
         f32 nxz = sqr(floor_nX) + sqr(floor_nZ);
@@ -796,3 +800,4 @@ UNUSED s32 debug_sequence_tracker(s16 debugInputSequence[]) {
 #include "behaviors/pizza_face.inc.c"
 #include "behaviors/2d_cylinder_scene.inc.c"
 #include "behaviors/rocket.inc.c"
+#include "behaviors/kart.inc.c"

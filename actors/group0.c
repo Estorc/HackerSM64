@@ -32,3 +32,4 @@
 #endif
 
 #include "mario_particle/model.inc.c"
+#include "kart/model.inc.c"

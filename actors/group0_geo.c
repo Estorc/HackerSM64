@@ -18,3 +18,4 @@
 #include "mario/geo.inc.c"
 
 #include "mario_particle/geo.inc.c"
+#include "kart/geo.inc.c"

@@ -386,8 +386,6 @@ Gfx *geo_render_dashing_mario(s32 callContext, struct GraphNode *node, UNUSED Ma
                 vec3s_copy(gDashingMario[0].angle, mario->header.gfx.angle);
                 vec3f_copy(gDashingMario[0].pos, mario->header.gfx.pos);
                 vec3f_copy(gDashingMario[0].scale, mario->header.gfx.scale);
-
-
                 gDashingMario[0].animInfo = mario->header.gfx.animInfo;
                 ((struct GraphNode *) &gDashingMario[0])->flags |= GRAPH_RENDER_ACTIVE;
             } else {
@@ -702,3 +700,4 @@ Gfx *geo_mirror_mario_backface_culling(s32 callContext, struct GraphNode *node, 
     }
     return gfx;
 }
+

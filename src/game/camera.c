@@ -871,7 +871,7 @@ s32 update_radial_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
  * Update the camera during 8 directional mode
  */
 s32 update_8_directions_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
-    approach_s16_asymptotic_bool(&s8DirModeYawOffset, gMarioState->faceAngle[1]-0x8000, 140-abss((s32) gMarioState->forwardVel));
+    if (gMarioState->forwardVel > 5) approach_s16_asymptotic_bool(&s8DirModeYawOffset, gMarioState->faceAngle[1]-0x8000, 140-abss((s32) gMarioState->forwardVel));
     s16 camYaw = s8DirModeBaseYaw + s8DirModeYawOffset;
     s16 pitch = look_down_slopes(camYaw) + sCUpCameraPitch;
     f32 posY;
@@ -1132,6 +1132,9 @@ void mode_8_directions_camera(struct Camera *c) {
 
     radial_camera_input(c);
 
+    gPlayer1Controller->timer--;
+    if (gPlayer1Controller->timer > 10) gPlayer1Controller->timer = 0;
+
     if (gPlayer1Controller->buttonPressed & R_CBUTTONS) {
         s8DirModeYawOffset += DEGREES(45);
         play_sound_cbutton_side();
@@ -1146,18 +1149,18 @@ void mode_8_directions_camera(struct Camera *c) {
         s8DirModeYawOffset = 0;
         s8DirModeYawOffset = gMarioState->faceAngle[1] - 0x8000;
     }
-    else if (gPlayer1Controller->buttonDown & U_JPAD) {
-        sCUpCameraPitch += DEGREES(2);
+    else if (gPlayer1Controller->buttonDown & U_CBUTTONS) {
+        sCUpCameraPitch += DEGREES(4);
         if (sCUpCameraPitch > 0x2000) sCUpCameraPitch = 0x2000;
     }
-    else if (gPlayer1Controller->buttonDown & L_JPAD) {
-        s8DirModeYawOffset -= DEGREES(2);
+    else if (gPlayer1Controller->buttonDown & L_CBUTTONS) {
+        s8DirModeYawOffset -= DEGREES(4);
     }
-    else if (gPlayer1Controller->buttonDown & R_JPAD) {
-        s8DirModeYawOffset += DEGREES(2);
+    else if (gPlayer1Controller->buttonDown & R_CBUTTONS) {
+        s8DirModeYawOffset += DEGREES(4);
     }
-    else if (gPlayer1Controller->buttonDown & D_JPAD) {
-        sCUpCameraPitch -= DEGREES(2);
+    else if (gPlayer1Controller->buttonDown & D_CBUTTONS) {
+        sCUpCameraPitch -= DEGREES(4);
         if (sCUpCameraPitch < -0x3000) sCUpCameraPitch = -0x3000;
         //s8DirModeYawOffset = snap_to_45_degrees(s8DirModeYawOffset);
     }
@@ -1768,7 +1771,7 @@ s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
         yawSpeed = 2;
     }
     // Rotate up
-    if (sCButtonsPressed & D_CBUTTONS) {
+    if (gPlayer1Controller->buttonPressed & D_CBUTTONS) {
         if (gPlayer1Controller->buttonPressed & (U_CBUTTONS | D_CBUTTONS)) {
             play_sound_cbutton_side();
         }
@@ -1780,7 +1783,7 @@ s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
         pitchInc = 0x800;
     }
     // Rotate down
-    if (sCButtonsPressed & U_CBUTTONS) {
+    if (gPlayer1Controller->buttonPressed & U_CBUTTONS) {
         if (gPlayer1Controller->buttonPressed & (U_CBUTTONS | D_CBUTTONS)) {
             play_sound_cbutton_side();
         }
@@ -4740,6 +4743,7 @@ void radial_camera_input(struct Camera *c) {
     }
 
     // Zoom in / enter C-Up
+    // Rotate down
     if (gPlayer1Controller->buttonPressed & U_CBUTTONS) {
         if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
             gCameraMovementFlags &= ~CAM_MOVE_ZOOMED_OUT;

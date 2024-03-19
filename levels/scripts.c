@@ -210,6 +210,7 @@ const LevelScript script_func_global_1[] = {
     LOAD_MODEL_FROM_GEO(MODEL_ROCKET_OBSTACLE_2,       rocket_obstacle_2_geo),
     LOAD_MODEL_FROM_GEO(MODEL_ROCKET_OBSTACLE_3,       rocket_obstacle_3_geo),
     LOAD_MODEL_FROM_GEO(MODEL_ROCKET_OBSTACLE_4,       rocket_obstacle_4_geo),
+    LOAD_MODEL_FROM_GEO(MODEL_MARIO_KART,              kart_geo),
     RETURN(),
 };
 
@@ -315,6 +316,8 @@ const LevelScript script_func_global_13[] = {
     LOAD_MODEL_FROM_GEO(MODEL_BOWSER_FLAMES,           bowser_flames_geo),
     LOAD_MODEL_FROM_GEO(MODEL_BOWSER_WAVE,             invisible_bowser_accessory_geo),
     LOAD_MODEL_FROM_GEO(MODEL_BOWSER_NO_SHADOW,        bowser_geo_no_shadow),
+    LOAD_MODEL_FROM_GEO(MODEL_MR_I_IRIS,               mr_i_iris_geo),
+    LOAD_MODEL_FROM_GEO(MODEL_MR_I_BODY,               mr_i_geo),
     RETURN(),
 };
 

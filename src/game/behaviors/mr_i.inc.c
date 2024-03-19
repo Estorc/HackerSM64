@@ -303,3 +303,124 @@ void bhv_mr_i_body_loop(void) {
 
     o->oInteractStatus = INT_STATUS_NONE;
 }
+
+
+void spawn_large_mr_i_particle(void) {
+    f32 yScale = o->header.gfx.scale[1];
+
+    struct Object *particle = spawn_object(o, MODEL_PURPLE_MARBLE, bhvLargeMrIParticle);
+#ifdef MR_I_PITCH_SHOOTING
+    // Take pitch into account
+    particle->oPosX += (90.0f * yScale) *  coss(o->oMoveAnglePitch) * sins(o->oMoveAngleYaw);
+    particle->oPosY += (90.0f * yScale) * -sins(o->oMoveAnglePitch) - (50.0f * 1);
+    particle->oPosZ += (90.0f * yScale) *  coss(o->oMoveAnglePitch) * coss(o->oMoveAngleYaw);
+#else
+    particle->oPosY += 50.0f * yScale;
+    particle->oPosX += sins(o->oMoveAngleYaw) * 90.0f * yScale;
+    particle->oPosZ += coss(o->oMoveAngleYaw) * 90.0f * yScale;
+#endif
+    cur_obj_play_sound_2(SOUND_OBJ_MRI_SHOOT);
+}
+
+
+void large_mr_i_body_act_looking_at_mario(void) {
+    s16 startYaw = o->oMoveAngleYaw;
+
+    if (o->oTimer == 0) {
+        if (o->oBehParams2ndByte) {
+            o->oMrISpinAngle = 200;
+        } else {
+            o->oMrISpinAngle = 120;
+        }
+        o->oMrISpinAmount    = 0;
+        o->oMrISpinDirection = 0;
+        o->oMrIParticleTimer = 0;
+        o->oMrIParticleTimerTarget = (s32)(random_float() * 10.0f + 10.0f);
+    }
+
+    obj_turn_toward_object(o, gMarioObject, O_MOVE_ANGLE_YAW_INDEX,   0x800);
+    obj_turn_toward_object(o, gMarioObject, O_MOVE_ANGLE_PITCH_INDEX, 0x400);
+
+    s16 dYaw = startYaw - (s16)(o->oMoveAngleYaw);
+
+    if (o->oMrIParticleTimer == o->oMrIParticleTimerTarget) {
+        o->oMrIBlinking = TRUE;
+    }
+
+    if (o->oMrIParticleTimer == o->oMrIParticleTimerTarget + 20) {
+        spawn_large_mr_i_particle();
+        o->oMrIParticleTimer = 0;
+        o->oMrIParticleTimerTarget = (s32)(random_float() * 10.0f + 10.0f);
+    }
+    o->oMrIParticleTimer++;
+}
+
+
+void bhv_large_mr_i_body_loop(void) {
+    cur_obj_scale(o->oBehParams2ndByte + 1);
+    obj_set_hitbox(o, &sMrIHitbox);
+    large_mr_i_body_act_looking_at_mario();
+
+    o->oInteractStatus = INT_STATUS_NONE;
+}
+
+
+void bhv_large_mr_i_iris_loop(void) {
+    obj_copy_pos_and_angle(o, o->parentObj);
+
+    if (!(o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {
+        obj_copy_scale(o, o->parentObj);
+        obj_set_parent_relative_pos(o, 0, 0, o->header.gfx.scale[1] * 100.0f);
+        obj_build_transform_from_pos_and_angle(o, O_PARENT_RELATIVE_POS_INDEX, O_MOVE_ANGLE_INDEX);
+        obj_translate_local(o, O_POS_INDEX, O_PARENT_RELATIVE_POS_INDEX);
+        o->oFaceAnglePitch = o->oMoveAnglePitch;
+        o->oGraphYOffset = o->parentObj->oGraphYOffset;
+    }
+
+    if (!o->parentObj->oMrIBlinking) {
+        o->oAnimState = OBJ_ANIM_STATE_INIT_ANIM;
+    } else {
+        o->oAnimState++;
+        if (o->oAnimState == 15) {
+            o->parentObj->oMrIBlinking = FALSE;
+        }
+    }
+
+    if (o->parentObj->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
+        obj_mark_for_deletion(o);
+    }
+}
+
+
+
+
+void large_mr_i_piranha_particle_act_move(void) {
+#ifdef MR_I_PITCH_SHOOTING
+    // Take pitch into account
+    o->oVelX = (o->oForwardVel *  coss(o->oMoveAnglePitch*1.8f) * sins(o->oMoveAngleYaw));
+    o->oVelY = (o->oForwardVel * -sins(o->oMoveAnglePitch*1.8f)                         );
+    o->oVelZ = (o->oForwardVel *  coss(o->oMoveAnglePitch*1.8f) * coss(o->oMoveAngleYaw));
+    vec3f_add(&o->oPosVec, &o->oVelVec);
+#endif
+
+    cur_obj_scale(24.0f);
+    o->oForwardVel = 100.0f;
+    cur_obj_update_floor_and_walls();
+
+    if (o->oInteractStatus & INT_STATUS_INTERACTED) {
+        o->oAction = MR_I_PIRANHA_PARTICLE_ACT_INTERACTED;
+    } else if ((o->oTimer > 300) || (o->oMoveFlags & OBJ_MOVE_HIT_WALL)
+               || (o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {
+        obj_mark_for_deletion(o);
+        spawn_mist_particles();
+    }
+}
+
+ObjActionFunc sLargeMrIParticleActions[] = {
+    large_mr_i_piranha_particle_act_move,
+    mr_i_piranha_particle_act_interacted,
+};
+
+void bhv_large_mr_i_particle_loop(void) {
+    cur_obj_call_action_function(sLargeMrIParticleActions);
+}

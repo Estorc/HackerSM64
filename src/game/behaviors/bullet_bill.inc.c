@@ -21,7 +21,7 @@ void bullet_bill_act_0(void) {
 
 void bullet_bill_act_1(void) {
     s16 sp1E = abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw);
-    if (sp1E < 0x2000 && 400.0f < o->oDistanceToMario && o->oDistanceToMario < 1500.0f) {
+    if (sp1E < 0x2000 && 400.0f < o->oDistanceToMario && o->oDistanceToMario < 15000.0f) {
         o->oAction = 2;
     }
 }
@@ -41,10 +41,16 @@ void bullet_bill_act_2(void) {
         }
 
         spawn_object(o, MODEL_SMOKE, bhvWhitePuffSmoke);
-        o->oForwardVel = 30.0f;
+        o->oForwardVel = 80.0f;
 
         if (o->oDistanceToMario > 300.0f) {
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x100);
+            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
+            s16 startPitch;
+
+            startPitch = (s16) o->oMoveAnglePitch;
+            o->oMoveAnglePitch = approach_s16_symmetric(o->oMoveAngleYaw, atan2s(gMarioState->marioObj->oPosY - o->oPosY, gMarioState->marioObj->oPosX - o->oPosX), 0x400);
+
+            o->oAngleVelPitch = (s16)((s16) o->oMoveAnglePitch - startPitch);
         }
 
         if (o->oTimer == 50) {
@@ -52,7 +58,7 @@ void bullet_bill_act_2(void) {
             cur_obj_shake_screen(SHAKE_POS_SMALL);
         }
 
-        if (o->oTimer > 150 || o->oMoveFlags & OBJ_MOVE_HIT_WALL) {
+        if (o->oTimer > 300 || o->oMoveFlags & OBJ_MOVE_HIT_WALL) {
             o->oAction = 3;
             spawn_mist_particles();
         }

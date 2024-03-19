@@ -1,6 +1,5 @@
 // rocket.inc.c
 
-#include "game/print.h"
 #include "engine/surface_collision.h"
 
 

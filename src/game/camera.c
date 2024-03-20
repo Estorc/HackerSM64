@@ -28,6 +28,7 @@
 #include "config.h"
 #include "puppyprint.h"
 #include "profiling.h"
+#include "main.h"
 
 #define CBUTTON_MASK (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)
 
@@ -1135,36 +1136,35 @@ void mode_8_directions_camera(struct Camera *c) {
     gPlayer1Controller->timer--;
     if (gPlayer1Controller->timer > 10) gPlayer1Controller->timer = 0;
 
-    if (gPlayer1Controller->buttonPressed & R_CBUTTONS) {
+    if (gConfig.cammode ? gPlayer1Controller->buttonPressed & R_JPAD : gPlayer1Controller->buttonPressed & R_CBUTTONS) {
         s8DirModeYawOffset += DEGREES(45);
         play_sound_cbutton_side();
     }
-    if (gPlayer1Controller->buttonPressed & L_CBUTTONS) {
+    if (gConfig.cammode ? gPlayer1Controller->buttonPressed & L_JPAD : gPlayer1Controller->buttonPressed & L_CBUTTONS) {
         s8DirModeYawOffset -= DEGREES(45);
         play_sound_cbutton_side();
     }
-#ifdef PARALLEL_LAKITU_CAM
+    
     // extra functionality
-    else if (gPlayer1Controller->buttonPressed & R_TRIG) {
+    if (gConfig.dashmode ? gPlayer1Controller->buttonPressed & R_TRIG : gPlayer1Controller->buttonPressed & L_TRIG) {
         s8DirModeYawOffset = 0;
         s8DirModeYawOffset = gMarioState->faceAngle[1] - 0x8000;
     }
-    else if (gPlayer1Controller->buttonDown & U_CBUTTONS) {
-        sCUpCameraPitch += DEGREES(4);
+    if (gConfig.cammode ? gPlayer1Controller->buttonDown & U_CBUTTONS : gPlayer1Controller->buttonDown & U_JPAD) {
+        sCUpCameraPitch += DEGREES(gConfig.camspeed);
         if (sCUpCameraPitch > 0x2000) sCUpCameraPitch = 0x2000;
     }
-    else if (gPlayer1Controller->buttonDown & L_CBUTTONS) {
-        s8DirModeYawOffset -= DEGREES(4);
+    if (gConfig.cammode ? gPlayer1Controller->buttonDown & L_CBUTTONS : gPlayer1Controller->buttonDown & L_JPAD) {
+        s8DirModeYawOffset -= DEGREES(gConfig.camspeed);
     }
-    else if (gPlayer1Controller->buttonDown & R_CBUTTONS) {
-        s8DirModeYawOffset += DEGREES(4);
+    if (gConfig.cammode ? gPlayer1Controller->buttonDown & R_CBUTTONS : gPlayer1Controller->buttonDown & R_JPAD) {
+        s8DirModeYawOffset += DEGREES(gConfig.camspeed);
     }
-    else if (gPlayer1Controller->buttonDown & D_CBUTTONS) {
-        sCUpCameraPitch -= DEGREES(4);
+    if (gConfig.cammode ? gPlayer1Controller->buttonDown & D_CBUTTONS : gPlayer1Controller->buttonDown & D_JPAD) {
+        sCUpCameraPitch -= DEGREES(gConfig.camspeed);
         if (sCUpCameraPitch < -0x3000) sCUpCameraPitch = -0x3000;
         //s8DirModeYawOffset = snap_to_45_degrees(s8DirModeYawOffset);
     }
-#endif
 
     lakitu_zoom(800.f, 0x900);
     c->nextYaw = update_8_directions_camera(c, c->focus, pos);
@@ -2651,7 +2651,7 @@ void mode_c_up_camera(struct Camera *c) {
     sPanDistance = 0.f;
 
     // Exit C-Up mode
-    if (gPlayer1Controller->buttonPressed & (A_BUTTON | B_BUTTON | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)) {
+    if (gPlayer1Controller->buttonPressed & (A_BUTTON | B_BUTTON | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS | L_JPAD | D_JPAD | R_JPAD)) {
         exit_c_up(c);
     }
 }
@@ -4744,7 +4744,7 @@ void radial_camera_input(struct Camera *c) {
 
     // Zoom in / enter C-Up
     // Rotate down
-    if (gPlayer1Controller->buttonPressed & U_CBUTTONS) {
+    if (gConfig.cammode ? gPlayer1Controller->buttonPressed & U_JPAD : gPlayer1Controller->buttonPressed & U_CBUTTONS) {
         if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
             gCameraMovementFlags &= ~CAM_MOVE_ZOOMED_OUT;
             play_sound_cbutton_up();
@@ -4754,7 +4754,7 @@ void radial_camera_input(struct Camera *c) {
     }
 
     // Zoom out
-    if (gPlayer1Controller->buttonPressed & D_CBUTTONS) {
+    if (gConfig.cammode ? gPlayer1Controller->buttonPressed & D_JPAD : gPlayer1Controller->buttonPressed & D_CBUTTONS) {
         if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
             gCameraMovementFlags |= CAM_MOVE_ALREADY_ZOOMED_OUT;
             play_camera_buzz_if_cdown();

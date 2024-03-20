@@ -24,7 +24,7 @@ __asm__(
  ".balign 16\n"
  ".global menu_font\n"
  "menu_font:\n"
- ".incbin \"textures/fonts/newfont3.bin\"\n"
+ ".incbin \"textures/fonts/menufont.bin\"\n"
  ".previous\n"
 );
 

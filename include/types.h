@@ -27,8 +27,11 @@
 struct Config {
     f32 audioFrequency;
 #ifdef WIDE
-    s16 widescreen;
+    u8 widescreen;
 #endif
+    u8 dashmode;
+    u8 cammode;
+    u8 camspeed;
     u8 tvType;
 };
 

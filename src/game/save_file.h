@@ -62,6 +62,9 @@ struct MainMenuSaveData {
 #ifdef WIDE
     u8 wideMode: 1;
 #endif
+    u8 dashmode: 1;
+    u8 cammode: 1;
+    u8 camspeed: 2;
 
 #if MULTILANG
     u8 language: 2;
@@ -187,6 +190,8 @@ void save_file_set_cap_pos(s16 x, s16 y, s16 z);
 s32 save_file_get_cap_pos(Vec3s capPos);
 void save_file_set_sound_mode(u16 mode);
 u32 save_file_get_sound_mode(void);
+void save_file_init_options(struct Config *config);
+void save_file_set_options();
 #ifdef WIDE
 u32 save_file_get_widescreen_mode(void);
 void save_file_set_widescreen_mode(u8 mode);

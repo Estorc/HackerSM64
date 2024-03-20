@@ -132,6 +132,7 @@ s8 gDialogLineNum = 1;
 s8 gLastDialogResponse = 0;
 u8 gMenuHoldKeyIndex = 0;
 u8 gMenuHoldKeyTimer = 0;
+u8 gMenuID = 0;
 s32 gDialogResponse = DIALOG_RESPONSE_NONE;
 
 
@@ -582,22 +583,49 @@ void print_credits_string(s16 x, s16 y, const u8 *str) {
 void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8 maxIndex) {
     u8 index = 0;
 
-    if (scrollDirection == MENU_SCROLL_VERTICAL) {
-        if ((gPlayer1Controller->rawStickY >  60) || (gPlayer1Controller->buttonDown & (U_CBUTTONS | U_JPAD))) index++;
-        if ((gPlayer1Controller->rawStickY < -60) || (gPlayer1Controller->buttonDown & (D_CBUTTONS | D_JPAD))) index += 2;
-    } else if (scrollDirection == MENU_SCROLL_HORIZONTAL) {
-        if ((gPlayer1Controller->rawStickX >  60) || (gPlayer1Controller->buttonDown & (R_CBUTTONS | R_JPAD))) index += 2;
-        if ((gPlayer1Controller->rawStickX < -60) || (gPlayer1Controller->buttonDown & (L_CBUTTONS | L_JPAD))) index++;
+    switch (scrollDirection) {
+        case MENU_SCROLL_VERTICAL:
+            if ((gPlayer1Controller->rawStickY >  60) || (gPlayer1Controller->buttonDown & (U_CBUTTONS | U_JPAD))) index |= 1;
+            if ((gPlayer1Controller->rawStickY < -60) || (gPlayer1Controller->buttonDown & (D_CBUTTONS | D_JPAD))) index |= 2;
+            break;
+
+        case MENU_SCROLL_HORIZONTAL:
+            if ((gPlayer1Controller->rawStickX >  60) || (gPlayer1Controller->buttonDown & (R_CBUTTONS | R_JPAD))) index |= 8;
+            if ((gPlayer1Controller->rawStickX < -60) || (gPlayer1Controller->buttonDown & (L_CBUTTONS | L_JPAD))) index |= 4;
+            break;
+
+        case MENU_SCROLL_MENU:
+            if ((gPlayer1Controller->rawStickY >  60) || (gPlayer1Controller->buttonDown & (U_CBUTTONS | U_JPAD))) index |= 1;
+            if ((gPlayer1Controller->rawStickY < -60) || (gPlayer1Controller->buttonDown & (D_CBUTTONS | D_JPAD))) index |= 2;
+            if ((gPlayer1Controller->rawStickX >  60) || (gPlayer1Controller->buttonDown & (R_CBUTTONS | R_JPAD))) index |= 8;
+            if ((gPlayer1Controller->rawStickX < -60) || (gPlayer1Controller->buttonDown & (L_CBUTTONS | L_JPAD))) index |= 4;
+            break;
     }
 
-    if (((index ^ gMenuHoldKeyIndex) & index) == 2) {
+    if (((index ^ gMenuHoldKeyIndex) & (index & 12)) == 8) {
+        if (*currentIndex != maxIndex || scrollDirection == MENU_SCROLL_MENU) {
+            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+            if (scrollDirection != MENU_SCROLL_MENU) (*currentIndex)++;
+            else gPlayer1Controller->buttonPressed |= A_BUTTON;
+        }
+    }
+
+    if (((index ^ gMenuHoldKeyIndex) & (index & 12)) == 4) {
+        if (*currentIndex != minIndex || scrollDirection == MENU_SCROLL_MENU) {
+            play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+            if (scrollDirection != MENU_SCROLL_MENU) (*currentIndex)--;
+            else gPlayer1Controller->buttonPressed |= B_BUTTON;
+        }
+    }
+
+    if (((index ^ gMenuHoldKeyIndex) & (index & 3)) == 2) {
         if (*currentIndex != maxIndex) {
             play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
             (*currentIndex)++;
         }
     }
 
-    if (((index ^ gMenuHoldKeyIndex) & index) == 1) {
+    if (((index ^ gMenuHoldKeyIndex) & (index & 3)) == 1) {
         if (*currentIndex != minIndex) {
             play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
             (*currentIndex)--;
@@ -612,7 +640,7 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
         gMenuHoldKeyIndex = index;
     }
 
-    if ((index & 3) == 0) {
+    if ((index & 0xF) == 0) {
         gMenuHoldKeyTimer = 0;
     }
 }
@@ -1750,8 +1778,6 @@ void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
 #define Y_VAL8 2
 
 void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
-    u8 textContinue[] = { TEXT_CONTINUE };
-    u8 textExitCourse[] = { TEXT_EXIT_COURSE };
 
     handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 3);
 
@@ -1763,6 +1789,29 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
     gDPSetTextureFilter(dlHead++, G_TF_POINT);
     gDPSetTextureLUT(dlHead++, G_TT_NONE);
     drawMenuStringCol(&dlHead, x + 10, y*3/2 - 2, "Continue\nExit Course\nOptions", 255, 255, 255);
+    gDisplayListHead = dlHead;
+
+    create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((*index - 1) * yIndex)) - Y_VAL8, 0);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
+    gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
+    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+}
+
+void render_pause_options_menu(s16 x, s16 y, s8 *index, s16 yIndex) {
+
+    char menuText[200];
+    sprintf(menuText, "Screen Resolution: %s\nDash Mode: %s\nCamera Mode: %s\nCamera Speed: %d\nReturn Menu", gConfig.widescreen ? "Widescreen (16:9)":"Vanilla (4:3)", gConfig.dashmode ? "L Trigger":"R Trigger", gConfig.cammode ? "Smooth" : "Vanilla", gConfig.camspeed);
+
+    handle_menu_scrolling(MENU_SCROLL_MENU, index, 1, 5);
+
+    Gfx* dlHead = gDisplayListHead;
+    gDPPipeSync(dlHead++);
+    gDPSetCycleType(dlHead++, G_CYC_1CYCLE);
+    gDPSetRenderMode(dlHead++, G_RM_TEX_EDGE, G_RM_TEX_EDGE2);
+    gDPSetTexturePersp(dlHead++, G_TP_NONE);
+    gDPSetTextureFilter(dlHead++, G_TF_POINT);
+    gDPSetTextureLUT(dlHead++, G_TT_NONE);
+    drawMenuStringCol(&dlHead, x + 10, y*3/2 - 2, menuText, 255, 255, 255);
     gDisplayListHead = dlHead;
 
     create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((*index - 1) * yIndex)) - Y_VAL8, 0);
@@ -1954,7 +2003,8 @@ s32 render_pause_courses_and_castle(void) {
 
         case DIALOG_STATE_VERTICAL:
             shade_screen();
-            render_pause_my_score_coins();
+            //render_pause_my_score_coins();
+            print_hud_pause_colorful_str();
             render_pause_red_coins();
 #ifndef DISABLE_EXIT_COURSE
 #ifdef EXIT_COURSE_WHILE_MOVING
@@ -1963,20 +2013,77 @@ s32 render_pause_courses_and_castle(void) {
 #else
             if (gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) {
 #endif
-                render_pause_course_options(99, 93, &gDialogLineNum, 15);
+                switch(gMenuID) {
+                    case 0:
+                        render_pause_course_options(99, 93, &gDialogLineNum, 12);
+                        break;
+                    case 1:
+                        render_pause_options_menu(99, 93, &gDialogLineNum, 12);
+                        break;
+
+                }
+                
             }
 #endif
 
-            if (gPlayer1Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
-                level_set_transition(0, NULL);
-                play_sound(SOUND_MENU_PAUSE_CLOSE, gGlobalSoundSource);
-                gDialogBoxState = DIALOG_STATE_OPENING;
-                gMenuMode = MENU_MODE_NONE;
+            if (gPlayer1Controller->buttonPressed & (B_BUTTON | A_BUTTON | START_BUTTON)) {
+                switch(gMenuID) {
+                    case 0:
+                        switch(gDialogLineNum) {
+                            case MENU_OPT_EXIT_COURSE:
+                                index = gDialogLineNum;
+                                break;
 
-                if (gDialogLineNum == MENU_OPT_EXIT_COURSE) {
-                    index = gDialogLineNum;
-                } else { // MENU_OPT_CONTINUE or MENU_OPT_CAMERA_ANGLE_R
-                    index = MENU_OPT_DEFAULT;
+                            case 3:
+                                gMenuID = 1;
+                                gDialogLineNum = 1;
+                                index = MENU_OPT_NONE;
+                                break;
+
+                            default:
+                                index = MENU_OPT_DEFAULT;
+                                break;
+                        }
+                        break;
+                    case 1:
+                        index = MENU_OPT_NONE;
+                        switch(gDialogLineNum) {
+
+                            case 1:
+                                gConfig.widescreen ^= 1;
+                                break;
+                            case 2:
+                                gConfig.dashmode ^= 1;
+                                break;
+                            case 3:
+                                gConfig.cammode ^= 1;
+                                break;
+
+                            case 4:
+                                if (gPlayer1Controller->buttonPressed & B_BUTTON) gConfig.camspeed--;
+                                else gConfig.camspeed++;
+                                if (gConfig.camspeed > 5)
+                                    gConfig.camspeed = 1;
+                                if (gConfig.camspeed < 1)
+                                    gConfig.camspeed = 5;
+                                break;
+
+                            case 5:
+                                gMenuID = 0;
+                                gDialogLineNum = 1;
+                                break;
+                        }
+                        break;
+
+                }
+
+
+                if (index != MENU_OPT_NONE) {
+                    gMenuID = 0;
+                    level_set_transition(0, NULL);
+                    play_sound(SOUND_MENU_PAUSE_CLOSE, gGlobalSoundSource);
+                    gDialogBoxState = DIALOG_STATE_OPENING;
+                    gMenuMode = MENU_MODE_NONE;
                 }
 
                 return index;
@@ -2000,7 +2107,7 @@ s32 render_pause_courses_and_castle(void) {
             break;
     }
 #if defined(WIDE) && !defined(PUPPYCAM)
-        render_widescreen_setting();
+        //render_widescreen_setting();
 #endif
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;

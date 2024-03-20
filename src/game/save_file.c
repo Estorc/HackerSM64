@@ -704,6 +704,23 @@ void save_file_set_sound_mode(u16 mode) {
     save_main_menu_data();
 }
 
+void save_file_init_options(struct Config *config) {
+    config->widescreen = gSaveBuffer.menuData.wideMode;
+    config->dashmode = gSaveBuffer.menuData.dashmode;
+    config->cammode = gSaveBuffer.menuData.cammode;
+    config->camspeed = gSaveBuffer.menuData.camspeed ? gSaveBuffer.menuData.camspeed : 2;
+}
+
+void save_file_set_options() {
+    gSaveBuffer.menuData.wideMode = gConfig.widescreen;
+    gSaveBuffer.menuData.dashmode = gConfig.dashmode;
+    gSaveBuffer.menuData.cammode = gConfig.cammode;
+    gSaveBuffer.menuData.camspeed = gConfig.camspeed;
+
+    gMainMenuDataModified = TRUE;
+    save_main_menu_data();
+}
+
 #ifdef WIDE
 u32 save_file_get_widescreen_mode(void) {
     return gSaveBuffer.menuData.wideMode;

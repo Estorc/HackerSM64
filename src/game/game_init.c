@@ -769,9 +769,8 @@ void thread5_game_loop(UNUSED void *arg) {
 
     play_music(SEQ_PLAYER_SFX, SEQUENCE_ARGS(0, SEQ_SOUND_PLAYER), 0);
     set_sound_mode(save_file_get_sound_mode());
-#ifdef WIDE
-    gConfig.widescreen = save_file_get_widescreen_mode();
-#endif
+    save_file_init_options(&gConfig);
+
     render_init();
 
     while (TRUE) {

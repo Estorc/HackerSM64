@@ -14,6 +14,7 @@
 #include "memory.h"
 #include "behavior_data.h"
 #include "rumble_init.h"
+#include "main.h"
 
 #include "config.h"
 
@@ -854,7 +855,7 @@ s32 act_dashing(struct MarioState *m) {
     }
 
     if (m->actionState != 0 && is_anim_past_end(m)) {
-        if (m->input & INPUT_L_DOWN) {
+        if (gConfig.dashmode ? (m->input & INPUT_L_DOWN) : (m->input & INPUT_R_DOWN)) {
             set_mario_animation(m, 0);
             return set_mario_action(m, ACT_DASHING, 0);
         } else {
@@ -882,7 +883,7 @@ s32 act_walking(struct MarioState *m) {
         return set_jump_from_landing(m);
     }
 
-    if (m->input & INPUT_L_DOWN) {
+    if (gConfig.dashmode ? (m->input & INPUT_L_DOWN) : (m->input & INPUT_R_DOWN)) {
         set_mario_animation(m, MARIO_ANIM_GENERAL_LAND);
         return set_mario_action(m, ACT_DASHING, 0);
     }

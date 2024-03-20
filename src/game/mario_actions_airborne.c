@@ -17,6 +17,7 @@
 #include "rumble_init.h"
 
 #include "config.h"
+#include "main.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.animInfo.animFrame;
@@ -2186,7 +2187,7 @@ s32 act_dashing_in_air(struct MarioState *m) {
 
         case AIR_STEP_LANDED:
             if (m->flags & MARIO_TURBODASH) m->forwardVel = 120.0f;
-            if (m->input & INPUT_L_DOWN) {
+            if (gConfig.dashmode ? (m->input & INPUT_L_DOWN) : (m->input & INPUT_R_DOWN)) {
                 set_mario_animation(m, 0);
                 return set_mario_action(m, ACT_DASHING, 0);
             } else {

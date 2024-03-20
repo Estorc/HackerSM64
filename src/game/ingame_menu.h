@@ -18,6 +18,8 @@ enum MenuScrollAxis {
     MENU_SCROLL_NONE,
     MENU_SCROLL_VERTICAL,
     MENU_SCROLL_HORIZONTAL,
+    MENU_SCROLL_BOTH,
+    MENU_SCROLL_MENU,
 };
 
 // Japanese File Select uses an unique table
